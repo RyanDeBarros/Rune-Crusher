@@ -78,13 +78,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6fe36cae6d6c324081ce13e87ce3469, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blueRunePrefab: {fileID: 6792171834729894249, guid: 1ce1be61da1a9a14283aa6e86873adce, type: 3}
-  greenRunePrefab: {fileID: 6792171834729894249, guid: 9eb19754dc6912c4eab2c8b6b577a0e4, type: 3}
-  purpleRunePrefab: {fileID: 6792171834729894249, guid: 9f5d435780f2400489a958c9922f1a2f, type: 3}
-  redRunePrefab: {fileID: 6792171834729894249, guid: d43c9a2039fe7724a992f36739c23c15, type: 3}
-  yellowRunePrefab: {fileID: 6792171834729894249, guid: 8395064527f61ce438edc35f06b6a793, type: 3}
-  numberOfRows: 8
-  numberOfCols: 8
+  gridParent: {fileID: 7202731337371675352}
+  runePrefab: {fileID: 1264531162286799205, guid: 39bd0e3e9a122b84ca2330dc7e8f9b33, type: 3}
   firstCell: {fileID: 3331183075162044682}
   lastCell: {fileID: 134258913046122769}
 --- !u!1 &3331183075162044682

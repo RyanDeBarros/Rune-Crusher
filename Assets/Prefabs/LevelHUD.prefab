@@ -1075,8 +1075,8 @@ MonoBehaviour:
   movesLeftText: {fileID: 6967163206762129591}
   levelNameText: {fileID: 6445268506448593152}
   levelName: 
-  candiesLeft: 100
-  timeRemaining: 100
+  candiesLeft: 64
+  timeRemaining: 90
   initialMoves: 15
 --- !u!1 &6890878509402980125
 GameObject:
