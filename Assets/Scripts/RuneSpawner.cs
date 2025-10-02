@@ -69,8 +69,7 @@ public class RuneSpawner : MonoBehaviour
 
     public void SpawnRune(RuneColor color, int x, int y)
     {
-        Assert.IsTrue(x >= 0 && x < numberOfRows);
-        Assert.IsTrue(y >= 0 && y < numberOfCols);
+        Assert.IsTrue(IsValidCoordinates(new(x, y)));
         Assert.IsNull(runes[x, y]);
 
         GameObject obj = Instantiate(runePrefab, new Vector3(firstCellPosition.x + x * cellSize.x,
@@ -117,5 +116,25 @@ public class RuneSpawner : MonoBehaviour
         runeB.transform.position = runeAPosition;
         runeB.coordinates = runeACoordinates;
         runes[runeACoordinates.x, runeACoordinates.y] = runeB;
+    }
+
+    public Vector2Int? GetCoordinatesUnderPosition(Vector2 position)
+    {
+        float offX = position.x - firstCellPosition.x + 0.5f * cellSize.x;
+        float offY = position.y - firstCellPosition.y + 0.5f * cellSize.y;
+
+        if (offX < 0 || offY < 0)
+            return null;
+
+        Vector2Int coordinates = new((int)(offX / cellSize.x), (int)(offY / cellSize.y));
+        if (IsValidCoordinates(coordinates))
+            return coordinates;
+        else
+            return null;
+    }
+
+    public bool IsValidCoordinates(Vector2Int coords)
+    {
+        return coords.x >= 0 && coords.x < numberOfCols && coords.y >= 0 && coords.y < numberOfRows;
     }
 }
