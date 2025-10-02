@@ -14,11 +14,20 @@ public class LevelHUDController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timeRemainingText;
     [SerializeField] private TextMeshProUGUI movesLeftText;
     [SerializeField] private TextMeshProUGUI levelNameText;
+    [SerializeField] private RawImage runeToMatch;
     [SerializeField] private string levelName;
 
-    [SerializeField] private int candiesLeft = 64;
+    [Header("Initial Stats")]
+    [SerializeField] private int candiesLeft = 20;
     [SerializeField] private int timeRemaining = 90;
     [SerializeField] private int initialMoves = 15;
+
+    [Header("Images")]
+    [SerializeField] private Texture blueRuneTexture;
+    [SerializeField] private Texture greenRuneTexture;
+    [SerializeField] private Texture purpleRuneTexture;
+    [SerializeField] private Texture redRuneTexture;
+    [SerializeField] private Texture yellowRuneTexture;
 
     private bool isPlaying = true;
     private float timeRemainingFloat = 0f;
@@ -37,6 +46,7 @@ public class LevelHUDController : MonoBehaviour
         Assert.IsNotNull(candiesLeftText);
         Assert.IsNotNull(timeRemainingText);
         Assert.IsNotNull(movesLeftText);
+        Assert.IsNotNull(runeToMatch);
         Assert.IsNotNull(levelNameText);
         levelNameText.SetText(levelName);
     }
@@ -102,5 +112,17 @@ public class LevelHUDController : MonoBehaviour
     public void SetMovesLeftText(int movesLeft)
     {
         movesLeftText.SetText($"Moves left: {movesLeft}");
+    }
+
+    public void SetRuneToMatchImage(RuneColor color)
+    {
+        runeToMatch.texture = color switch {
+            RuneColor.Blue => blueRuneTexture,
+            RuneColor.Green => greenRuneTexture,
+            RuneColor.Purple => purpleRuneTexture,
+            RuneColor.Red => redRuneTexture,
+            RuneColor.Yellow => yellowRuneTexture,
+            _ => null
+        };
     }
 }

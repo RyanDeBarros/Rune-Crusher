@@ -41,6 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 672366992653118282}
   - component: {fileID: 4843416663850306898}
+  - component: {fileID: 7776851194042036441}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -82,6 +83,18 @@ MonoBehaviour:
   runePrefab: {fileID: 1264531162286799205, guid: 39bd0e3e9a122b84ca2330dc7e8f9b33, type: 3}
   firstCell: {fileID: 3331183075162044682}
   lastCell: {fileID: 134258913046122769}
+--- !u!114 &7776851194042036441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305195460326783412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe7804a6c40f07841b170ff4c3c74035, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3331183075162044682
 GameObject:
   m_ObjectHideFlags: 0

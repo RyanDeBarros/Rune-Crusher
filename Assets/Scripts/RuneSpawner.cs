@@ -19,15 +19,6 @@ public class RuneSpawner : MonoBehaviour
     private Vector2 firstCellPosition;
     private Vector2 cellSize;
 
-    public enum RuneColor
-    {
-        Blue,
-        Green,
-        Purple,
-        Red,
-        Yellow
-    }
-
     private void Start()
     {
         firstCellPosition = firstCell.transform.position;

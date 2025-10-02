@@ -12,7 +12,7 @@ public class Rune : MonoBehaviour
     [SerializeField] private Sprite yellowSprite;
 
     public RuneSpawner spawner;
-    public RuneSpawner.RuneColor color;
+    public RuneColor color;
     public Vector2Int coordinates;
 
     private void Start()
@@ -23,11 +23,11 @@ public class Rune : MonoBehaviour
         Assert.IsNotNull(spriteRenderer);
         spriteRenderer.sprite = color switch
         {
-            RuneSpawner.RuneColor.Blue => blueSprite,
-            RuneSpawner.RuneColor.Green => greenSprite,
-            RuneSpawner.RuneColor.Purple => purpleSprite,
-            RuneSpawner.RuneColor.Red => redSprite,
-            RuneSpawner.RuneColor.Yellow => yellowSprite,
+            RuneColor.Blue => blueSprite,
+            RuneColor.Green => greenSprite,
+            RuneColor.Purple => purpleSprite,
+            RuneColor.Red => redSprite,
+            RuneColor.Yellow => yellowSprite,
             _ => null
         };
     }

@@ -331,6 +331,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Grid
       objectReference: {fileID: 0}
+    - target: {fileID: 7776851194042036441, guid: 142f5441416a1fe4dade8a5c149dc21a, type: 3}
+      propertyPath: hud
+      value: 
+      objectReference: {fileID: 2130734048}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -397,6 +401,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 873cde458dcbaec499fa90775b84d858, type: 3}
+--- !u!114 &2130734048 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7605821943154831729, guid: 873cde458dcbaec499fa90775b84d858, type: 3}
+  m_PrefabInstance: {fileID: 2130734047}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fc2e527dbd61e841b687544b0ebe980, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
