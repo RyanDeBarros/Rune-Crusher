@@ -12,15 +12,30 @@ public class Rune : MonoBehaviour
     [SerializeField] private Sprite yellowSprite;
 
     public RuneSpawner spawner;
-    public RuneColor color;
     public Vector2Int coordinates;
+
+    private SpriteRenderer spriteRenderer;
+    private RuneColor color;
+
+    private void Awake()
+    {
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        Assert.IsNotNull(spriteRenderer);
+    }
 
     private void Start()
     {
         Assert.IsNotNull(spawner);
+    }
 
-        SpriteRenderer spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        Assert.IsNotNull(spriteRenderer);
+    public void Move(int x, int y)
+    {
+        spawner.MoveRune(coordinates, x, y);
+    }
+
+    public void SetColor(RuneColor color)
+    {
+        this.color = color;
         spriteRenderer.sprite = color switch
         {
             RuneColor.Blue => blueSprite,
@@ -32,8 +47,8 @@ public class Rune : MonoBehaviour
         };
     }
 
-    public void Move(int x, int y)
+    public RuneColor GetColor()
     {
-        spawner.MoveRune(coordinates, x, y);
+        return color;
     }
 }

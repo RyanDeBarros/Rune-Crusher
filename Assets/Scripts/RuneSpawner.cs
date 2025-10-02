@@ -46,8 +46,8 @@ public class RuneSpawner : MonoBehaviour
                 // don't allow horizontal 3+ runes of same color
                 if (x > 1)
                 {
-                    RuneColor pc1 = runes[x - 1, y].color;
-                    RuneColor pc2 = runes[x - 2, y].color;
+                    RuneColor pc1 = runes[x - 1, y].GetColor();
+                    RuneColor pc2 = runes[x - 2, y].GetColor();
                     if (pc1 == pc2)
                         colors.Remove(pc1);
                 }
@@ -55,8 +55,8 @@ public class RuneSpawner : MonoBehaviour
                 // don't allow vertical 3+ runes of same color
                 if (y > 1)
                 {
-                    RuneColor pc1 = runes[x, y - 1].color;
-                    RuneColor pc2 = runes[x, y - 2].color;
+                    RuneColor pc1 = runes[x, y - 1].GetColor();
+                    RuneColor pc2 = runes[x, y - 2].GetColor();
                     if (pc1 == pc2)
                         colors.Remove(pc1);
                 }
@@ -69,7 +69,7 @@ public class RuneSpawner : MonoBehaviour
 
     public void SpawnRune(RuneColor color, int x, int y)
     {
-        Assert.IsTrue(IsValidCoordinates(new(x, y)));
+        Assert.IsTrue(IsSpawnableCoordinates(new(x, y)));
         Assert.IsNull(runes[x, y]);
 
         GameObject obj = Instantiate(runePrefab, new Vector3(firstCellPosition.x + x * cellSize.x,
@@ -79,7 +79,7 @@ public class RuneSpawner : MonoBehaviour
         Assert.IsNotNull(rune);
         rune.spawner = this;
         rune.coordinates = new(x, y);
-        rune.color = color;
+        rune.SetColor(color);
 
         runes[x, y] = rune;
     }
@@ -105,17 +105,9 @@ public class RuneSpawner : MonoBehaviour
         Rune runeB = runes[runeBCoordinates.x, runeBCoordinates.y];
         Assert.IsNotNull(runeA);
         Assert.IsNotNull(runeB);
-        
-        Vector2 runeAPosition = runeA.transform.position;
-        Vector2 runeBPosition = runeB.transform.position;
-
-        runeA.transform.position = runeBPosition;
-        runeA.coordinates = runeBCoordinates;
-        runes[runeBCoordinates.x, runeBCoordinates.y] = runeA;
-
-        runeB.transform.position = runeAPosition;
-        runeB.coordinates = runeACoordinates;
-        runes[runeACoordinates.x, runeACoordinates.y] = runeB;
+        RuneColor tempColor = runeA.GetColor();
+        runeA.SetColor(runeB.GetColor());
+        runeB.SetColor(tempColor);
     }
 
     public Vector2Int? GetCoordinatesUnderPosition(Vector2 position)
@@ -135,6 +127,19 @@ public class RuneSpawner : MonoBehaviour
 
     public bool IsValidCoordinates(Vector2Int coords)
     {
-        return coords.x >= 0 && coords.x < numberOfCols && coords.y >= 0 && coords.y < numberOfRows;
+        if (coords.x < 0 || coords.x >= numberOfCols)
+            return false;
+        if (coords.y < 0 || coords.y >= numberOfRows)
+            return false;
+        return runes[coords.x, coords.y] != null;
+    }
+
+    private bool IsSpawnableCoordinates(Vector2Int coords)
+    {
+        if (coords.x < 0 || coords.x >= numberOfCols)
+            return false;
+        if (coords.y < 0 || coords.y >= numberOfRows)
+            return false;
+        return runes[coords.x, coords.y] == null;
     }
 }
