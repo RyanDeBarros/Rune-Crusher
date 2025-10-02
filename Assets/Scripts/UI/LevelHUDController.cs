@@ -12,11 +12,13 @@ public class LevelHUDController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI candiesLeftText;
     [SerializeField] private TextMeshProUGUI timeRemainingText;
+    [SerializeField] private TextMeshProUGUI movesLeftText;
     [SerializeField] private TextMeshProUGUI levelNameText;
     [SerializeField] private string levelName;
 
-    [SerializeField] private int candiesLeft = 100;
-    [SerializeField] private int timeRemaining = 100;
+    [SerializeField] private int candiesLeft = 64;
+    [SerializeField] private int timeRemaining = 90;
+    [SerializeField] private int initialMoves = 15;
 
     private bool isPlaying = true;
     private float timeRemainingFloat = 0f;
@@ -34,15 +36,18 @@ public class LevelHUDController : MonoBehaviour
         Assert.IsNotNull(scoreText);
         Assert.IsNotNull(candiesLeftText);
         Assert.IsNotNull(timeRemainingText);
+        Assert.IsNotNull(movesLeftText);
         Assert.IsNotNull(levelNameText);
         levelNameText.SetText(levelName);
     }
 
     private void Start()
     {
+        SetScoreText(0);
         SetNumberOfCandiesLeftText();
         timeRemainingFloat = timeRemaining;
         SetTimeRemainingText();
+        SetMovesLeftText(initialMoves);
     }
 
     private void Update()
@@ -92,5 +97,10 @@ public class LevelHUDController : MonoBehaviour
     private void SetTimeRemainingText()
     {
         timeRemainingText.SetText($"Time left: {timeRemaining}");
+    }
+
+    public void SetMovesLeftText(int movesLeft)
+    {
+        movesLeftText.SetText($"Moves left: {movesLeft}");
     }
 }
