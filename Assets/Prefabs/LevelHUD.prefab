@@ -936,6 +936,8 @@ MonoBehaviour:
   scoreText: {fileID: 5776792809885152243}
   candiesLeftText: {fileID: 4998111001104563189}
   timeRemainingText: {fileID: 2365004578466824080}
+  levelNameText: {fileID: 6445268506448593152}
+  levelName: 
   candiesLeft: 100
   timeRemaining: 100
 --- !u!1 &6890878509402980125

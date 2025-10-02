@@ -12,6 +12,8 @@ public class LevelHUDController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI candiesLeftText;
     [SerializeField] private TextMeshProUGUI timeRemainingText;
+    [SerializeField] private TextMeshProUGUI levelNameText;
+    [SerializeField] private string levelName;
 
     [SerializeField] private int candiesLeft = 100;
     [SerializeField] private int timeRemaining = 100;
@@ -32,6 +34,8 @@ public class LevelHUDController : MonoBehaviour
         Assert.IsNotNull(scoreText);
         Assert.IsNotNull(candiesLeftText);
         Assert.IsNotNull(timeRemainingText);
+        Assert.IsNotNull(levelNameText);
+        levelNameText.SetText(levelName);
     }
 
     private void Start()
