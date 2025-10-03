@@ -90,35 +90,38 @@ public class RuneClicker : MonoBehaviour
         {
             Vector2Int toCoordinates = coordinates.Value + new Vector2Int(byX, byY);
             if (spawner.IsValidCoordinates(toCoordinates))
-            {
-                paused = true;
-                spawner.SwapRunes(coordinates.Value, toCoordinates);
-                --movesLeft;
-                hud.SetMovesLeftText(movesLeft);
-
-                // check for matches, compute scores, and reduce number of required target runes
-                IEnumerable<int> ComputeScores()
-                {
-                    int cascadeLevel = 0;
-                    bool matched;
-                    do
-                    {
-                        matched = spawner.CheckForRuneMatches(cascadeLevel++, out int score);
-                        if (matched)
-                            spawner.Cascade();
-                        yield return score;
-                    }
-                    while (matched);
-                }
-                int score = ComputeScores().Sum();
-
-                paused = false;
-                if (movesLeft > 0)
-                    UpdateScore(score);
-                else
-                    EndLevel();
-            }
+                StartCoroutine(SpawnRunesRoutine(coordinates.Value, toCoordinates));
         }
+    }
+
+    private IEnumerator SpawnRunesRoutine(Vector2Int fromCoordinates, Vector2Int toCoordinates)
+    {
+        paused = true;
+        --movesLeft;
+        hud.SetMovesLeftText(movesLeft);
+        yield return spawner.SwapRunes(fromCoordinates, toCoordinates);
+
+        // check for matches, compute scores, and reduce number of required target runes
+        IEnumerable<int> ComputeScores()
+        {
+            int cascadeLevel = 0;
+            bool matched;
+            do
+            {
+                matched = spawner.CheckForRuneMatches(cascadeLevel++, out int score);
+                if (matched)
+                    spawner.Cascade();
+                yield return score;
+            }
+            while (matched);
+        }
+        int score = ComputeScores().Sum();
+
+        paused = false;
+        if (movesLeft > 0)
+            UpdateScore(score);
+        else
+            EndLevel();
     }
 
     private void EndLevel()

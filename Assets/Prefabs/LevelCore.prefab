@@ -162,6 +162,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Grid
       objectReference: {fileID: 0}
+    - target: {fileID: 4843416663850306898, guid: 142f5441416a1fe4dade8a5c149dc21a, type: 3}
+      propertyPath: runeSwapAnimationDuration
+      value: 0.05
+      objectReference: {fileID: 0}
     - target: {fileID: 7465839152580280596, guid: 142f5441416a1fe4dade8a5c149dc21a, type: 3}
       propertyPath: hud
       value: 

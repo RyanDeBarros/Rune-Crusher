@@ -13,6 +13,9 @@ public class RuneSpawner : MonoBehaviour
     [SerializeField] private GameObject firstCell;
     [SerializeField] private GameObject lastCell;
 
+    [Header("Animation")]
+    [SerializeField] private float runeSwapAnimationDuration = 0.05f;
+
     private static readonly int numberOfRows = 8;
     private static readonly int numberOfCols = 8;
     private readonly Rune[,] runes = new Rune[numberOfRows, numberOfCols];
@@ -75,8 +78,7 @@ public class RuneSpawner : MonoBehaviour
 
                 Assert.IsNull(runes[x, y]);
 
-                GameObject obj = Instantiate(runePrefab, new Vector3(firstCellPosition.x + x * cellSize.x,
-                    firstCellPosition.y + y * cellSize.y, -1f), Quaternion.identity, gridParent.transform);
+                GameObject obj = Instantiate(runePrefab, new Vector3(GetTilePositionX(x), GetTilePositionY(y), -1f), Quaternion.identity, gridParent.transform);
 
                 Rune rune = obj.GetComponent<Rune>();
                 Assert.IsNotNull(rune);
@@ -106,23 +108,63 @@ public class RuneSpawner : MonoBehaviour
         Assert.IsFalse(runes[toX, toY].HasColor());
 
         Rune rune = runes[runeCoordinates.x, runeCoordinates.y];
-        rune.transform.position = new Vector2(rune.transform.position.x + toX * cellSize.x,
-            rune.transform.position.y + toY * cellSize.y);
+        rune.transform.position = new Vector2(rune.transform.position.x + toX * cellSize.x, rune.transform.position.y + toY * cellSize.y);
         rune.coordinates = new(toX, toY);
 
         runes[toX, toY] = rune;
         DespawnRune(runeCoordinates.x, runeCoordinates.y);
     }
 
-    public void SwapRunes(Vector2Int runeACoordinates, Vector2Int runeBCoordinates)
+    private float GetTilePositionX(int x)
+    {
+        return firstCellPosition.x + x * cellSize.x;
+    }
+
+    private float GetTilePositionY(int y)
+    {
+        return firstCellPosition.y + y * cellSize.y;
+    }
+
+    private Vector2 GetTilePosition(Vector2Int coords)
+    {
+        return new Vector2(GetTilePositionX(coords.x), GetTilePositionY(coords.y));
+    }
+
+    public IEnumerator SwapRunes(Vector2Int runeACoordinates, Vector2Int runeBCoordinates)
     {
         Rune runeA = runes[runeACoordinates.x, runeACoordinates.y];
         Rune runeB = runes[runeBCoordinates.x, runeBCoordinates.y];
+        yield return AnimateRuneSwap(runeA, runeB);
         Assert.IsTrue(runeA.HasColor());
         Assert.IsTrue(runeB.HasColor());
         RuneColor tempColor = runeA.GetColor();
         runeA.SetColor(runeB.GetColor());
         runeB.SetColor(tempColor);
+        Vector3 posA = runeA.transform.position;
+        Vector3 posB = runeB.transform.position;
+        runeA.transform.position = posB;
+        runeB.transform.position = posA;
+    }
+
+    private IEnumerator AnimateRuneSwap(Rune runeA, Rune runeB)
+    {
+        Vector3 posA = runeA.transform.position;
+        Vector3 posB = runeB.transform.position;
+
+        float elapsed = 0f;
+        while (elapsed < runeSwapAnimationDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / runeSwapAnimationDuration;
+
+            runeA.transform.position = Vector3.Lerp(posA, posB, t);
+            runeB.transform.position = Vector3.Lerp(posB, posA, t);
+
+            yield return null;
+        }
+        
+        runeA.transform.position = posB;
+        runeB.transform.position = posA;
     }
 
     public Vector2Int? GetCoordinatesUnderPosition(Vector2 position)
