@@ -15,7 +15,7 @@ public class Rune : MonoBehaviour
     public Vector2Int coordinates;
 
     private SpriteRenderer spriteRenderer;
-    private RuneColor color;
+    private RuneColor? color;
 
     private void Awake()
     {
@@ -33,22 +33,35 @@ public class Rune : MonoBehaviour
         spawner.MoveRune(coordinates, x, y);
     }
 
-    public void SetColor(RuneColor color)
+    public void SetColor(RuneColor? color)
     {
-        this.color = color;
-        spriteRenderer.sprite = color switch
+        if (color.HasValue)
         {
-            RuneColor.Blue => blueSprite,
-            RuneColor.Green => greenSprite,
-            RuneColor.Purple => purpleSprite,
-            RuneColor.Red => redSprite,
-            RuneColor.Yellow => yellowSprite,
-            _ => null
-        };
+            this.color = color.Value;
+            spriteRenderer.sprite = color.Value switch
+            {
+                RuneColor.Blue => blueSprite,
+                RuneColor.Green => greenSprite,
+                RuneColor.Purple => purpleSprite,
+                RuneColor.Red => redSprite,
+                RuneColor.Yellow => yellowSprite,
+                _ => null
+            };
+        }
+        else
+        {
+            this.color = null;
+            spriteRenderer.sprite = null;
+        }
     }
 
     public RuneColor GetColor()
     {
-        return color;
+        return color.Value;
+    }
+
+    public bool HasColor()
+    {
+        return color.HasValue;
     }
 }

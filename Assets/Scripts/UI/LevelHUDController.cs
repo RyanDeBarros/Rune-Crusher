@@ -16,6 +16,7 @@ public class LevelHUDController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI levelNameText;
     [SerializeField] private RawImage runeToMatch;
     [SerializeField] private string levelName;
+    [SerializeField] private RuneClicker clicker;
 
     [Header("Initial Stats")]
     [SerializeField] private int candiesLeft = 20;
@@ -49,6 +50,8 @@ public class LevelHUDController : MonoBehaviour
         Assert.IsNotNull(runeToMatch);
         Assert.IsNotNull(levelNameText);
         levelNameText.SetText(levelName);
+
+        Assert.IsNotNull(clicker);
     }
 
     private void Start()
@@ -75,12 +78,14 @@ public class LevelHUDController : MonoBehaviour
     {
         pauseCanvas.SetActive(true);
         isPlaying = false;
+        clicker.OnPause();
     }
 
     public void OnResumeButtonClicked()
     {
         pauseCanvas.SetActive(false);
         isPlaying = true;
+        clicker.OnResume();
     }
 
     public void OnQuitButtonClicked()

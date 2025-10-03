@@ -85,6 +85,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LevelHUD
       objectReference: {fileID: 0}
+    - target: {fileID: 7605821943154831729, guid: 873cde458dcbaec499fa90775b84d858, type: 3}
+      propertyPath: clicker
+      value: 
+      objectReference: {fileID: 502021721380817492}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -171,6 +175,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 142f5441416a1fe4dade8a5c149dc21a, type: 3}
+--- !u!114 &502021721380817492 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7465839152580280596, guid: 142f5441416a1fe4dade8a5c149dc21a, type: 3}
+  m_PrefabInstance: {fileID: 7020117035047668544}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11c4310558e56de458495d7ca26ad18a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7509977814501040138 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 672366992653118282, guid: 142f5441416a1fe4dade8a5c149dc21a, type: 3}

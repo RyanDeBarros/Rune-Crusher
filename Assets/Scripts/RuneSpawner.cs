@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -62,33 +63,39 @@ public class RuneSpawner : MonoBehaviour
                 }
 
                 int colorIndex = Random.Range(0, colors.Count);
-                SpawnRune(colors[colorIndex], x, y);
+                RuneColor color = colors[colorIndex];
+
+                Assert.IsNull(runes[x, y]);
+
+                GameObject obj = Instantiate(runePrefab, new Vector3(firstCellPosition.x + x * cellSize.x,
+                    firstCellPosition.y + y * cellSize.y, -1f), Quaternion.identity, gridParent.transform);
+
+                Rune rune = obj.GetComponent<Rune>();
+                Assert.IsNotNull(rune);
+                rune.spawner = this;
+                rune.coordinates = new(x, y);
+                rune.SetColor(color);
+
+                runes[x, y] = rune;
             }
         }
     }
 
-    public void SpawnRune(RuneColor color, int x, int y)
+    private void SpawnRune(int x, int y, RuneColor color)
     {
-        Assert.IsTrue(IsSpawnableCoordinates(new(x, y)));
-        Assert.IsNull(runes[x, y]);
+        runes[x, y].SetColor(color);
+    }
 
-        GameObject obj = Instantiate(runePrefab, new Vector3(firstCellPosition.x + x * cellSize.x,
-            firstCellPosition.y + y * cellSize.y, -1f), Quaternion.identity, gridParent.transform);
-
-        Rune rune = obj.GetComponent<Rune>();
-        Assert.IsNotNull(rune);
-        rune.spawner = this;
-        rune.coordinates = new(x, y);
-        rune.SetColor(color);
-
-        runes[x, y] = rune;
+    private void DespawnRune(int x, int y)
+    {
+        runes[x, y].SetColor(null);
     }
 
     public void MoveRune(Vector2Int runeCoordinates, int byX, int byY)
     {
         int toX = runeCoordinates.x + byX;
         int toY = runeCoordinates.y + byY;
-        Assert.IsNull(runes[toX, toY]);
+        Assert.IsFalse(runes[toX, toY].HasColor());
 
         Rune rune = runes[runeCoordinates.x, runeCoordinates.y];
         rune.transform.position = new Vector2(rune.transform.position.x + toX * cellSize.x,
@@ -96,15 +103,15 @@ public class RuneSpawner : MonoBehaviour
         rune.coordinates = new(toX, toY);
 
         runes[toX, toY] = rune;
-        runes[runeCoordinates.x, runeCoordinates.y] = null;
+        DespawnRune(runeCoordinates.x, runeCoordinates.y);
     }
 
     public void SwapRunes(Vector2Int runeACoordinates, Vector2Int runeBCoordinates)
     {
         Rune runeA = runes[runeACoordinates.x, runeACoordinates.y];
         Rune runeB = runes[runeBCoordinates.x, runeBCoordinates.y];
-        Assert.IsNotNull(runeA);
-        Assert.IsNotNull(runeB);
+        Assert.IsTrue(runeA.HasColor());
+        Assert.IsTrue(runeB.HasColor());
         RuneColor tempColor = runeA.GetColor();
         runeA.SetColor(runeB.GetColor());
         runeB.SetColor(tempColor);
@@ -131,15 +138,53 @@ public class RuneSpawner : MonoBehaviour
             return false;
         if (coords.y < 0 || coords.y >= numberOfRows)
             return false;
-        return runes[coords.x, coords.y] != null;
+        return runes[coords.x, coords.y].HasColor();
     }
 
-    private bool IsSpawnableCoordinates(Vector2Int coords)
+    public bool IsCellEveryFilled()
     {
-        if (coords.x < 0 || coords.x >= numberOfCols)
-            return false;
-        if (coords.y < 0 || coords.y >= numberOfRows)
-            return false;
-        return runes[coords.x, coords.y] == null;
+        for (int x = 0; x < numberOfCols; ++x)
+            for (int y = 0; y < numberOfRows; ++y)
+                if (!runes[x, y].HasColor())
+                    return false;
+        return true;
+    }
+
+    private RuneColor ColorAt(int x, int y)
+    {
+        return runes[x, y].GetColor();
+    }
+
+    public void CheckForMatches()
+    {
+        Assert.IsTrue(IsCellEveryFilled());
+
+        HashSet<Vector2Int> matches = new();
+        for (int x = 1; x < numberOfCols - 1; ++x)
+        {
+            for (int y = 1; y < numberOfRows - 1; ++y)
+            {
+                RuneColor centerColor = ColorAt(x, y);
+
+                // Check horizontal
+                if (ColorAt(x - 1, y) == centerColor && ColorAt(x + 1, y) == centerColor)
+                {
+                    matches.Add(new Vector2Int(x, y));
+                    matches.Add(new Vector2Int(x - 1, y));
+                    matches.Add(new Vector2Int(x + 1, y));
+                }
+
+                // Check vertical
+                if (ColorAt(x, y - 1) == centerColor && ColorAt(x, y + 1) == centerColor)
+                {
+                    matches.Add(new Vector2Int(x, y));
+                    matches.Add(new Vector2Int(x, y - 1));
+                    matches.Add(new Vector2Int(x, y + 1));
+                }
+            }
+        }
+
+        foreach (Vector2Int match in matches)
+            DespawnRune(match.x, match.y);
     }
 }

@@ -14,6 +14,7 @@ public class RuneClicker : MonoBehaviour
 
     private bool mouseDragging = false;
     private Vector2 clickPosition;
+    private bool paused = false;
 
     private void Awake()
     {
@@ -36,6 +37,8 @@ public class RuneClicker : MonoBehaviour
 
     private void Update()
     {
+        if (paused) return;
+
         if (Input.GetMouseButtonDown(0))
         {
             if (!mouseDragging)
@@ -90,10 +93,34 @@ public class RuneClicker : MonoBehaviour
                 spawner.SwapRunes(coordinates.Value, toCoordinates);
                 --movesLeft;
                 hud.SetMovesLeftText(movesLeft);
-                // TODO 1. check for matches
-                // TODO 2. if movesLeft <= 0 end level (can be success or fail)
-                // TODO 3. update score
+                spawner.CheckForMatches();
+                if (movesLeft > 0)
+                    UpdateScore();
+                else
+                    EndLevel();
             }
         }
+    }
+
+    private void EndLevel()
+    {
+        // TODO check for success or fail
+    }
+
+    private void UpdateScore()
+    {
+        // TODO
+    }
+
+    public void OnPause()
+    {
+        paused = true;
+        mouseDragging = false;
+    }
+
+    public void OnResume()
+    {
+        paused = false;
+        mouseDragging = false;
     }
 }
