@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -59,5 +60,10 @@ public class ScoreTracker : MonoBehaviour
     {
         this.score += score;
         hud.SetScoreText(this.score);
+    }
+
+    public int CalculateScore(HashSet<Vector2Int> matches, int cascadeLevel)
+    {
+        return matches.Count * GetScorePerMatch(cascadeLevel);
     }
 }

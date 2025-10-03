@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -101,21 +102,22 @@ public class RuneClicker : MonoBehaviour
         hud.SetMovesLeftText(movesLeft);
         yield return spawner.SwapRunes(fromCoordinates, toCoordinates);
 
-        // check for matches, compute scores, and reduce number of required target runes
-        IEnumerable<int> ComputeScores()
+        int score = 0;
+        int cascadeLevel = 0;
+        bool matched;
+
+        do
         {
-            int cascadeLevel = 0;
-            bool matched;
-            do
+            HashSet<Vector2Int> matches = spawner.GetRuneMatches();
+            matched = matches.Count > 0;
+            if (matched)
             {
-                matched = spawner.CheckForRuneMatches(cascadeLevel++, out int score);
-                if (matched)
-                    spawner.Cascade();
-                yield return score;
+                score += scoreTracker.CalculateScore(matches, cascadeLevel++);
+                spawner.ConsumeRunes(matches);
+                yield return spawner.Cascade();
             }
-            while (matched);
         }
-        int score = ComputeScores().Sum();
+        while (matched);
 
         paused = false;
         if (movesLeft > 0)

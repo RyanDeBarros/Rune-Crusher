@@ -205,11 +205,11 @@ public class RuneSpawner : MonoBehaviour
         return runes[x, y].GetColor();
     }
 
-    public bool CheckForRuneMatches(int cascadeLevel, out int score)
+    public HashSet<Vector2Int> GetRuneMatches()
     {
         Assert.IsTrue(IsCellEveryFilled());
-
         HashSet<Vector2Int> matches = new();
+
         for (int x = 1; x < numberOfCols - 1; ++x)
         {
             for (int y = 1; y < numberOfRows - 1; ++y)
@@ -234,18 +234,21 @@ public class RuneSpawner : MonoBehaviour
             }
         }
 
-        score = 0;
-        foreach (Vector2Int match in matches)
-        {
-            scoreTracker.TryToCollectTargetRune(runes[match.x, match.y].GetColor());
-            score += scoreTracker.GetScorePerMatch(cascadeLevel);
-            DespawnRune(match.x, match.y);
-        }
-        return score > 0;
+        return matches;
     }
 
-    public void Cascade()
+    public void ConsumeRunes(HashSet<Vector2Int> matches)
+    {
+        foreach (Vector2Int match in matches)
+        {
+            scoreTracker.TryToCollectTargetRune(ColorAt(match.x, match.y));
+            DespawnRune(match.x, match.y);
+        }
+    }
+
+    public IEnumerator Cascade()
     {
         // TODO runes fall, and new runes drop into empty spaces - logic depends on the level #
+        yield return null;
     }
 }
