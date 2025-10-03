@@ -19,11 +19,7 @@ public class LevelHUDController : MonoBehaviour
     [SerializeField] private RuneClicker clicker;
     [SerializeField] private GameObject gameOverHUDPrefab;
     [SerializeField] private GameObject levelCompleteHUDPrefab;
-
-    [Header("Initial Stats")]
-    [SerializeField] private int runesLeft = 20;
     [SerializeField] private int timeRemaining = 90;
-    [SerializeField] private int initialMoves = 15;
 
     [Header("Images")]
     [SerializeField] private Texture blueRuneTexture;
@@ -59,10 +55,8 @@ public class LevelHUDController : MonoBehaviour
     private void Start()
     {
         SetScoreText(0);
-        SetNumberOfRunesLeftText();
         timeRemainingFloat = timeRemaining;
         SetTimeRemainingText();
-        SetMovesLeftText(initialMoves);
     }
 
     private void Update()
@@ -105,18 +99,7 @@ public class LevelHUDController : MonoBehaviour
         scoreText.SetText($"Score: {score}");
     }
 
-    public void DecrementRunesLeft(int decrement = 1)
-    {
-        runesLeft -= decrement;
-        SetNumberOfRunesLeftText();
-    }
-
-    public int GetRunesLeft()
-    {
-        return runesLeft;
-    }
-
-    private void SetNumberOfRunesLeftText()
+    public void SetNumberOfRunesLeftText(int runesLeft)
     {
         runesLeftText.SetText($"Runes left: {runesLeft}");
     }

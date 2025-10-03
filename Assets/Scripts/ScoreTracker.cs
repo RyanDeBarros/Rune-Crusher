@@ -8,9 +8,11 @@ public class ScoreTracker : MonoBehaviour
     [SerializeField] private LevelHUDController hud;
     [SerializeField] private int scorePerMatch = 10;
     [SerializeField] private float cascadeMultiplier = 2f;
+    [SerializeField] private int initialRunesLeft = 20;
 
     private RuneColor targetRune;
     private int score;
+    private int runesLeft;
 
     private void Awake()
     {
@@ -21,6 +23,7 @@ public class ScoreTracker : MonoBehaviour
     {
         targetRune = (RuneColor)Random.Range(0, 5);
         hud.SetRuneToMatchImage(targetRune);
+        runesLeft = initialRunesLeft;
     }
 
     public LevelHUDController GetHUD()
@@ -32,11 +35,17 @@ public class ScoreTracker : MonoBehaviour
     {
         if (color == targetRune)
         {
-            hud.DecrementRunesLeft();
+            --runesLeft;
+            hud.SetNumberOfRunesLeftText(runesLeft);
             return scorePerMatch;
         }
         else
             return 0;
+    }
+
+    public int GetRunesLeft()
+    {
+        return runesLeft;
     }
 
     public int GetScore()
