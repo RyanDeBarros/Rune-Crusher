@@ -28,6 +28,6 @@ public class ScoreTracker : MonoBehaviour
     public void Collect(RuneColor color)
     {
         if (color == targetRune)
-            hud.DecrementCandiesLeft();
+            hud.DecrementRunesLeft();
     }
 }

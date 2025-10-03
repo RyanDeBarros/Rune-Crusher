@@ -10,7 +10,7 @@ public class LevelHUDController : MonoBehaviour
 {
     [SerializeField] private GameObject pauseCanvas;
     [SerializeField] private TextMeshProUGUI scoreText;
-    [SerializeField] private TextMeshProUGUI candiesLeftText;
+    [SerializeField] private TextMeshProUGUI runesLeftText;
     [SerializeField] private TextMeshProUGUI timeRemainingText;
     [SerializeField] private TextMeshProUGUI movesLeftText;
     [SerializeField] private TextMeshProUGUI levelNameText;
@@ -19,7 +19,7 @@ public class LevelHUDController : MonoBehaviour
     [SerializeField] private RuneClicker clicker;
 
     [Header("Initial Stats")]
-    [SerializeField] private int candiesLeft = 20;
+    [SerializeField] private int runesLeft = 20;
     [SerializeField] private int timeRemaining = 90;
     [SerializeField] private int initialMoves = 15;
 
@@ -44,7 +44,7 @@ public class LevelHUDController : MonoBehaviour
         }
 
         Assert.IsNotNull(scoreText);
-        Assert.IsNotNull(candiesLeftText);
+        Assert.IsNotNull(runesLeftText);
         Assert.IsNotNull(timeRemainingText);
         Assert.IsNotNull(movesLeftText);
         Assert.IsNotNull(runeToMatch);
@@ -57,7 +57,7 @@ public class LevelHUDController : MonoBehaviour
     private void Start()
     {
         SetScoreText(0);
-        SetNumberOfCandiesLeftText();
+        SetNumberOfRunesLeftText();
         timeRemainingFloat = timeRemaining;
         SetTimeRemainingText();
         SetMovesLeftText(initialMoves);
@@ -98,15 +98,15 @@ public class LevelHUDController : MonoBehaviour
         scoreText.SetText($"Score: {score}");
     }
 
-    public void DecrementCandiesLeft(int decrement = 1)
+    public void DecrementRunesLeft(int decrement = 1)
     {
-        candiesLeft -= decrement;
-        SetNumberOfCandiesLeftText();
+        runesLeft -= decrement;
+        SetNumberOfRunesLeftText();
     }
 
-    private void SetNumberOfCandiesLeftText()
+    private void SetNumberOfRunesLeftText()
     {
-        candiesLeftText.SetText($"Candies left: {candiesLeft}");
+        runesLeftText.SetText($"Runes left: {runesLeft}");
     }
 
     private void SetTimeRemainingText()

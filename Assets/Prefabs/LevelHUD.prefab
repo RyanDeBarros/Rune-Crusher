@@ -148,7 +148,7 @@ GameObject:
   - component: {fileID: 6859135585140130619}
   - component: {fileID: 4998111001104563189}
   m_Layer: 0
-  m_Name: Candies
+  m_Name: RunesLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -201,7 +201,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '# Candies that need to be matched'
+  m_text: '# Runes that need to be matched'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1070,13 +1070,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseCanvas: {fileID: 3879895122728173613}
   scoreText: {fileID: 5776792809885152243}
-  candiesLeftText: {fileID: 4998111001104563189}
+  runesLeftText: {fileID: 4998111001104563189}
   timeRemainingText: {fileID: 2365004578466824080}
   movesLeftText: {fileID: 6967163206762129591}
   levelNameText: {fileID: 6445268506448593152}
   runeToMatch: {fileID: 8148159575039260572}
   levelName: 
-  candiesLeft: 20
+  clicker: {fileID: 0}
+  runesLeft: 20
   timeRemaining: 90
   initialMoves: 15
   blueRuneTexture: {fileID: 2800000, guid: e64c887369230584c9fd63912be484d8, type: 3}
