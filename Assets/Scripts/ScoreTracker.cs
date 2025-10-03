@@ -31,16 +31,18 @@ public class ScoreTracker : MonoBehaviour
         return hud;
     }
 
-    public int CollectAndReturnScore(RuneColor color)
+    public void TryToCollectTargetRune(RuneColor color)
     {
         if (color == targetRune)
         {
             --runesLeft;
             hud.SetNumberOfRunesLeftText(runesLeft);
-            return scorePerMatch;
         }
-        else
-            return 0;
+    }
+
+    public int GetScorePerMatch(int cascadeLevel)
+    {
+        return Mathf.RoundToInt(scorePerMatch * Mathf.Pow(cascadeMultiplier, cascadeLevel));
     }
 
     public int GetRunesLeft()

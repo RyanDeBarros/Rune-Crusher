@@ -140,8 +140,6 @@ public class LevelHUDController : MonoBehaviour
         GameObject hud = Instantiate(levelCompleteHUDPrefab, transform);
         LevelCompleteHUDController controller = hud.GetComponent<LevelCompleteHUDController>();
         Assert.IsNotNull(controller);
-        controller.SetScoreText(score);
-
-        // TODO set score in level complete HUD
+        controller.SetScore(score);
     }
 }

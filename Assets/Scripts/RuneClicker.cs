@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -90,10 +91,28 @@ public class RuneClicker : MonoBehaviour
             Vector2Int toCoordinates = coordinates.Value + new Vector2Int(byX, byY);
             if (spawner.IsValidCoordinates(toCoordinates))
             {
+                paused = true;
                 spawner.SwapRunes(coordinates.Value, toCoordinates);
                 --movesLeft;
                 hud.SetMovesLeftText(movesLeft);
-                int score = spawner.CheckForMatchesAndReturnScore();
+
+                // check for matches, compute scores, and reduce number of required target runes
+                IEnumerable<int> ComputeScores()
+                {
+                    int cascadeLevel = 0;
+                    bool matched;
+                    do
+                    {
+                        matched = spawner.CheckForRuneMatches(cascadeLevel++, out int score);
+                        if (matched)
+                            spawner.Cascade();
+                        yield return score;
+                    }
+                    while (matched);
+                }
+                int score = ComputeScores().Sum();
+
+                paused = false;
                 if (movesLeft > 0)
                     UpdateScore(score);
                 else

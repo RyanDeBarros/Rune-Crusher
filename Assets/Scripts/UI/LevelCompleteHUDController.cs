@@ -9,16 +9,15 @@ public class LevelCompleteHUDController : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI scoreText;
 
-    // TODO stars
-
     private void Awake()
     {
         Assert.IsNotNull(scoreText);
     }
 
-    public void SetScoreText(int score)
+    public void SetScore(int score)
     {
         scoreText.SetText($"Score: {score}");
+        // TODO display stars based on score
     }
 
     public void OnContinueButtonClicked()
