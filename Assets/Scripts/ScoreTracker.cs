@@ -6,8 +6,11 @@ using UnityEngine.Assertions;
 public class ScoreTracker : MonoBehaviour
 {
     [SerializeField] private LevelHUDController hud;
+    [SerializeField] private int scorePerMatch = 10;
+    [SerializeField] private float cascadeMultiplier = 2f;
 
     private RuneColor targetRune;
+    private int score;
 
     private void Awake()
     {
@@ -25,9 +28,20 @@ public class ScoreTracker : MonoBehaviour
         return hud;
     }
 
-    public void Collect(RuneColor color)
+    public int CollectAndReturnScore(RuneColor color)
     {
         if (color == targetRune)
+        {
             hud.DecrementRunesLeft();
+            return scorePerMatch;
+        }
+        else
+            return 0;
+    }
+
+    public void AddScore(int score)
+    {
+        this.score += score;
+        hud.SetScoreText(this.score);
     }
 }

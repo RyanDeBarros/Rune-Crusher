@@ -93,9 +93,9 @@ public class RuneClicker : MonoBehaviour
                 spawner.SwapRunes(coordinates.Value, toCoordinates);
                 --movesLeft;
                 hud.SetMovesLeftText(movesLeft);
-                spawner.CheckForMatches();
+                int score = spawner.CheckForMatchesAndReturnScore();
                 if (movesLeft > 0)
-                    UpdateScore();
+                    UpdateScore(score);
                 else
                     EndLevel();
             }
@@ -107,9 +107,10 @@ public class RuneClicker : MonoBehaviour
         // TODO check for success or fail
     }
 
-    private void UpdateScore()
+    private void UpdateScore(int score)
     {
         // TODO
+        scoreTracker.AddScore(score);
     }
 
     public void OnPause()

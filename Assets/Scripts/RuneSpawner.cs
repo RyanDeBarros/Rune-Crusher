@@ -163,7 +163,7 @@ public class RuneSpawner : MonoBehaviour
         return runes[x, y].GetColor();
     }
 
-    public void CheckForMatches()
+    public int CheckForMatchesAndReturnScore()
     {
         Assert.IsTrue(IsCellEveryFilled());
 
@@ -192,10 +192,12 @@ public class RuneSpawner : MonoBehaviour
             }
         }
 
+        int score = 0;
         foreach (Vector2Int match in matches)
         {
-            scoreTracker.Collect(runes[match.x, match.y].GetColor());
+            score += scoreTracker.CollectAndReturnScore(runes[match.x, match.y].GetColor());
             DespawnRune(match.x, match.y);
         }
+        return score;
     }
 }
