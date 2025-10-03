@@ -98,7 +98,7 @@ public class LevelHUDController : MonoBehaviour
         scoreText.SetText($"Score: {score}");
     }
 
-    public void DecrementCandiesLeft(int decrement)
+    public void DecrementCandiesLeft(int decrement = 1)
     {
         candiesLeft -= decrement;
         SetNumberOfCandiesLeftText();

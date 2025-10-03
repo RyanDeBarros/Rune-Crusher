@@ -20,6 +20,14 @@ public class RuneSpawner : MonoBehaviour
     private Vector2 firstCellPosition;
     private Vector2 cellSize;
 
+    private ScoreTracker scoreTracker;
+
+    private void Awake()
+    {
+        scoreTracker = GetComponent<ScoreTracker>();
+        Assert.IsNotNull(scoreTracker);
+    }
+
     private void Start()
     {
         firstCellPosition = firstCell.transform.position;
@@ -185,6 +193,9 @@ public class RuneSpawner : MonoBehaviour
         }
 
         foreach (Vector2Int match in matches)
+        {
+            scoreTracker.Collect(runes[match.x, match.y].GetColor());
             DespawnRune(match.x, match.y);
+        }
     }
 }
