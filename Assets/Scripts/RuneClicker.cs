@@ -104,13 +104,17 @@ public class RuneClicker : MonoBehaviour
 
     private void EndLevel()
     {
-        // TODO check for success or fail
+        if (hud.GetRunesLeft() > 0) // TODO put runes left in separate script, not HUD
+            hud.OpenGameOverHUD();
+        else
+            hud.OpenLevelCompleteHUD(scoreTracker.GetScore());
     }
 
     private void UpdateScore(int score)
     {
-        // TODO
         scoreTracker.AddScore(score);
+        if (hud.GetRunesLeft() <= 0)
+            hud.OpenLevelCompleteHUD(scoreTracker.GetScore());
     }
 
     public void OnPause()

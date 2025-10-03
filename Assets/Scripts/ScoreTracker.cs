@@ -39,6 +39,11 @@ public class ScoreTracker : MonoBehaviour
             return 0;
     }
 
+    public int GetScore()
+    {
+        return score;
+    }
+
     public void AddScore(int score)
     {
         this.score += score;

@@ -17,6 +17,8 @@ public class LevelHUDController : MonoBehaviour
     [SerializeField] private RawImage runeToMatch;
     [SerializeField] private string levelName;
     [SerializeField] private RuneClicker clicker;
+    [SerializeField] private GameObject gameOverHUDPrefab;
+    [SerializeField] private GameObject levelCompleteHUDPrefab;
 
     [Header("Initial Stats")]
     [SerializeField] private int runesLeft = 20;
@@ -68,7 +70,12 @@ public class LevelHUDController : MonoBehaviour
         if (isPlaying)
         {
             timeRemainingFloat -= Time.deltaTime;
-            // TODO if remainingTextFloat <= 0 -> game over
+            if (timeRemainingFloat <= 0f)
+            {
+                OpenGameOverHUD();
+                return;
+            }
+
             timeRemaining = (int)timeRemainingFloat;
             SetTimeRemainingText();
         }
@@ -104,6 +111,11 @@ public class LevelHUDController : MonoBehaviour
         SetNumberOfRunesLeftText();
     }
 
+    public int GetRunesLeft()
+    {
+        return runesLeft;
+    }
+
     private void SetNumberOfRunesLeftText()
     {
         runesLeftText.SetText($"Runes left: {runesLeft}");
@@ -129,5 +141,24 @@ public class LevelHUDController : MonoBehaviour
             RuneColor.Yellow => yellowRuneTexture,
             _ => null
         };
+    }
+
+    public void OpenGameOverHUD()
+    {
+        isPlaying = false;
+        clicker.OnPause();
+        Instantiate(gameOverHUDPrefab, transform);
+    }
+
+    public void OpenLevelCompleteHUD(int score)
+    {
+        isPlaying = false;
+        clicker.OnPause();
+        GameObject hud = Instantiate(levelCompleteHUDPrefab, transform);
+        LevelCompleteHUDController controller = hud.GetComponent<LevelCompleteHUDController>();
+        Assert.IsNotNull(controller);
+        controller.SetScoreText(score);
+
+        // TODO set score in level complete HUD
     }
 }
