@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 public class LevelHUDController : MonoBehaviour
 {
@@ -66,7 +67,7 @@ public class LevelHUDController : MonoBehaviour
             timeRemainingFloat -= Time.deltaTime;
             if (timeRemainingFloat <= 0f)
             {
-                OpenGameOverHUD();
+                OpenGameOverHUD(GameOverCause.OutOfTime);
                 return;
             }
 
@@ -126,11 +127,15 @@ public class LevelHUDController : MonoBehaviour
         };
     }
 
-    public void OpenGameOverHUD()
+    public void OpenGameOverHUD(GameOverCause cause)
     {
         isPlaying = false;
         clicker.OnPause();
-        Instantiate(gameOverHUDPrefab, transform);
+        GameObject hud = Instantiate(gameOverHUDPrefab, transform);
+        GameOverHUDController controller = hud.GetComponent<GameOverHUDController>();
+        Assert.IsNotNull(controller);
+        controller.levelName = levelName;
+        controller.cause = cause;
     }
 
     public void OpenLevelCompleteHUD(int score)
@@ -141,5 +146,6 @@ public class LevelHUDController : MonoBehaviour
         LevelCompleteHUDController controller = hud.GetComponent<LevelCompleteHUDController>();
         Assert.IsNotNull(controller);
         controller.SetScore(score);
+        controller.levelName = levelName;
     }
 }

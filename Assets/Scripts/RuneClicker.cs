@@ -119,24 +119,20 @@ public class RuneClicker : MonoBehaviour
 
         paused = false;
         if (movesLeft > 0)
-            UpdateScore(score);
+        {
+            // update score
+            scoreTracker.AddScore(score);
+            if (scoreTracker.GetRunesLeft() <= 0)
+                hud.OpenLevelCompleteHUD(scoreTracker.GetScore());
+        }
         else
-            EndLevel();
-    }
-
-    private void EndLevel()
-    {
-        if (scoreTracker.GetRunesLeft() > 0)
-            hud.OpenGameOverHUD();
-        else
-            hud.OpenLevelCompleteHUD(scoreTracker.GetScore());
-    }
-
-    private void UpdateScore(int score)
-    {
-        scoreTracker.AddScore(score);
-        if (scoreTracker.GetRunesLeft() <= 0)
-            hud.OpenLevelCompleteHUD(scoreTracker.GetScore());
+        {
+            // end level
+            if (scoreTracker.GetRunesLeft() > 0)
+                hud.OpenGameOverHUD(GameOverCause.OutOfMoves);
+            else
+                hud.OpenLevelCompleteHUD(scoreTracker.GetScore());
+        }
     }
 
     public void OnPause()

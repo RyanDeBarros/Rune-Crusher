@@ -7,11 +7,20 @@ using TMPro;
 
 public class LevelCompleteHUDController : MonoBehaviour
 {
+    [SerializeField] private TextMeshProUGUI levelNameText;
     [SerializeField] private TextMeshProUGUI scoreText;
+
+    public string levelName;
 
     private void Awake()
     {
+        Assert.IsNotNull(levelNameText);
         Assert.IsNotNull(scoreText);
+    }
+
+    private void Start()
+    {
+        levelNameText.SetText(levelName);
     }
 
     public void SetScore(int score)
