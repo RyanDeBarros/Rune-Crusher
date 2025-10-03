@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 
 public class ScoreTracker : MonoBehaviour
 {
-    [SerializeField] LevelHUDController hud;
+    [SerializeField] private LevelHUDController hud;
 
     private RuneColor targetRune;
 
@@ -18,5 +18,10 @@ public class ScoreTracker : MonoBehaviour
     {
         targetRune = (RuneColor)Random.Range(0, 5);
         hud.SetRuneToMatchImage(targetRune);
+    }
+
+    public LevelHUDController GetHUD()
+    {
+        return hud;
     }
 }

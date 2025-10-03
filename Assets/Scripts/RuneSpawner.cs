@@ -14,7 +14,7 @@ public class RuneSpawner : MonoBehaviour
 
     private static readonly int numberOfRows = 8;
     private static readonly int numberOfCols = 8;
-    private Rune[,] runes = new Rune[numberOfRows, numberOfCols];
+    private readonly Rune[,] runes = new Rune[numberOfRows, numberOfCols];
 
     private Vector2 firstCellPosition;
     private Vector2 cellSize;
