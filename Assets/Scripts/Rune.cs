@@ -15,7 +15,7 @@ public class Rune : MonoBehaviour
     public Vector2Int coordinates;
 
     private SpriteRenderer spriteRenderer;
-    private RuneColor? color;
+    private RuneColor? _color;
 
     private void Awake()
     {
@@ -37,7 +37,7 @@ public class Rune : MonoBehaviour
     {
         if (color.HasValue)
         {
-            this.color = color.Value;
+            this._color = color.Value;
             spriteRenderer.sprite = color.Value switch
             {
                 RuneColor.Blue => blueSprite,
@@ -50,18 +50,24 @@ public class Rune : MonoBehaviour
         }
         else
         {
-            this.color = null;
+            this._color = null;
             spriteRenderer.sprite = null;
         }
     }
 
     public RuneColor GetColor()
     {
-        return color.Value;
+        return _color.Value;
     }
 
     public bool HasColor()
     {
-        return color.HasValue;
+        return _color.HasValue;
+    }
+
+    public RuneColor? Color
+    {
+        get => GetColor();
+        set => SetColor(value);
     }
 }

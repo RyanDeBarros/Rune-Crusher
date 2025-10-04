@@ -84,6 +84,8 @@ MonoBehaviour:
   runePrefab: {fileID: 1264531162286799205, guid: 39bd0e3e9a122b84ca2330dc7e8f9b33, type: 3}
   firstCell: {fileID: 3331183075162044682}
   lastCell: {fileID: 134258913046122769}
+  runeSwapAnimationDuration: 0.05
+  runeFallSpeed: 5
 --- !u!114 &7776851194042036441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97,6 +99,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hud: {fileID: 0}
+  scorePerMatch: 10
+  cascadeMultiplier: 2
+  initialRunesLeft: 20
 --- !u!114 &7465839152580280596
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,6 +115,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   swapMotionThreshold: 0.5
+  hud: {fileID: 0}
+  movesLeft: 15
 --- !u!1 &3331183075162044682
 GameObject:
   m_ObjectHideFlags: 0
