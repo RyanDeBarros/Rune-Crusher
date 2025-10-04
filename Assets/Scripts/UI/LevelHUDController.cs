@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
 using TMPro;
-using Unity.VisualScripting;
 
 public class LevelHUDController : MonoBehaviour
 {
