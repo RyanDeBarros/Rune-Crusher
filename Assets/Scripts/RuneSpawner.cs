@@ -54,17 +54,16 @@ public class RuneSpawner : MonoBehaviour
         };
         Assert.IsNotNull(cascadeRefiller);
 
-        FillInitialGrid();
+        StartCoroutine(FillGrid());
     }
 
-    private void FillInitialGrid()
+    private IEnumerator FillGrid()
     {
+        List<Vector2Int> coordinates = new();
         for (int x = 0; x < numberOfCols; ++x)
         {
             for (int y = 0; y < numberOfRows; ++y)
             {
-                Assert.IsNull(runes[x, y]);
-
                 List<RuneColor> colors = cascadeRefiller.ColorList();
 
                 // don't allow horizontal 3+ runes of same color
@@ -86,8 +85,10 @@ public class RuneSpawner : MonoBehaviour
                 }
 
                 runes[x, y] = NewRune(x, y, colors[Random.Range(0, colors.Count)]);
+                coordinates.Add(new(x, y));
             }
         }
+        yield return AnimateNewRuneSpawn(coordinates);
     }
 
     private Rune NewRune(int x, int y, RuneColor color)
