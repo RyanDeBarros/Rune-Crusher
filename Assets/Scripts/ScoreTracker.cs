@@ -11,7 +11,6 @@ public class ScoreTracker : MonoBehaviour
     [SerializeField] private float cascadeMultiplier = 2f;
     [SerializeField] private int initialRunesLeft = 20; // TODO there should not be a target rune - must match 3 combos of each color. A combo is a match of 3+ runes. Re-playtest for proper star score thresholds.
 
-    // TODO add restart button in pause menu
     // TODO disallow swap if it doesn't result in a match - do animation for this.
     // TODO if no possible moves left, reshuffle the runes (call FillEntireGrid() until moves are possible).
     // TODO SFX

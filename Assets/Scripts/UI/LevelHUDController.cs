@@ -90,6 +90,11 @@ public class LevelHUDController : MonoBehaviour
         clicker.OnResume();
     }
 
+    public void OnRestartLevelClicked()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
     public void OnQuitButtonClicked()
     {
         SceneManager.LoadScene((int)SceneList.MainMenu);

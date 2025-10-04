@@ -733,9 +733,7 @@ MonoBehaviour:
   clicker: {fileID: 0}
   gameOverHUDPrefab: {fileID: 3075542162536031956, guid: 8cb973218e0f6b04598ad47a603cd94d, type: 3}
   levelCompleteHUDPrefab: {fileID: 6661792651872643203, guid: 08c303f28d60b0745b89ee833f6fc8d3, type: 3}
-  runesLeft: 20
   timeRemaining: 90
-  initialMoves: 15
   blueRuneTexture: {fileID: 2800000, guid: e64c887369230584c9fd63912be484d8, type: 3}
   greenRuneTexture: {fileID: 2800000, guid: ab207b4353de45444a129336b6a2cb11, type: 3}
   purpleRuneTexture: {fileID: 2800000, guid: b857029147a4e5c41ac2e1efd19f4cde, type: 3}
@@ -1294,6 +1292,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 7605821943154831729}
+    - target: {fileID: 8496117378959397744, guid: d67c7f0a0be4b044e97fdb96a5817dbc, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7605821943154831729}
+    - target: {fileID: 8496117378959397744, guid: d67c7f0a0be4b044e97fdb96a5817dbc, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnRestartLevelClicked
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -37,8 +37,7 @@ public class GameOverHUDController : MonoBehaviour
 
     public void OnRetryButtonClicked()
     {
-        int levelIndex = SceneManager.GetActiveScene().buildIndex;
-        SceneManager.LoadScene(levelIndex);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void OnMainMenuButtonClicked()
