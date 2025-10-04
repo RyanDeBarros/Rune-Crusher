@@ -1,5 +1,10 @@
 using System.Collections.Generic;
 
+public class RuneNeighbourhood
+{
+    public readonly RuneColor?[,] colors = new RuneColor?[3, 3];
+}
+
 public interface ICascadeRefiller
 {
     public List<RuneColor> ColorList()
@@ -13,6 +18,8 @@ public interface ICascadeRefiller
             RuneColor.Yellow
         };
     }
+
+    public RuneColor GenerateColor(RuneNeighbourhood neighbourhood);
 }
 
 public enum CascadeRefillStrategy

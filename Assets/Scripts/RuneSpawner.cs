@@ -284,14 +284,28 @@ public class RuneSpawner : MonoBehaviour
             {
                 if (!runes[x, y].HasColor())
                 {
-                    // TODO use refiller to generate color
-                    List<RuneColor> colors = cascadeRefiller.ColorList();
-                    runes[x, y].Color = colors[Random.Range(0, colors.Count)];
+                    runes[x, y].Color = cascadeRefiller.GenerateColor(GetRuneNeighbourhood(x, y));
                     newRunes.Add(new(x, y));
                 }
             }
         }
         yield return AnimateNewRuneSpawn(newRunes);
+    }
+
+    private RuneNeighbourhood GetRuneNeighbourhood(int x, int y)
+    {
+        RuneNeighbourhood neighbourhood = new();
+        for (int dx = -1; dx <= 1; ++dx)
+        {
+            for (int dy = -1; dy <= 1; ++dy)
+            {
+                int nx = x + dx;
+                int ny = y + dy;
+                if (nx >= 0 && nx < numberOfCols && ny >= 0 && ny < numberOfRows)
+                    neighbourhood.colors[dx + 1, dy + 1] = runes[nx, ny].Color;
+            }
+        }
+        return neighbourhood;
     }
 
     private IEnumerator AnimateCascade(List<(Vector2Int coords, int fallOffset)> fallTranslations)

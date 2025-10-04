@@ -67,7 +67,7 @@ public class Rune : MonoBehaviour
 
     public RuneColor? Color
     {
-        get => GetColor();
+        get => _color;
         set => SetColor(value);
     }
 }
