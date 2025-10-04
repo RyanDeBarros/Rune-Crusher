@@ -1,20 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 
 public class RuneSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject gridParent;
-
-    [SerializeField] private GameObject runePrefab;
-
     [SerializeField] private GameObject firstCell;
     [SerializeField] private GameObject lastCell;
+    [SerializeField] private GameObject runePrefab;
+
+    [SerializeField] private CascadeRefillStrategy cascadeRefillStrategy;
 
     [Header("Animation")]
     [SerializeField] private float runeSwapAnimationDuration = 0.05f;
     [SerializeField] private float runeFallSpeed = 5f;
+    [SerializeField] private float runeSpawnAnimationDuration = 0.05f;
 
     private static readonly int numberOfRows = 8;
     private static readonly int numberOfCols = 8;
@@ -22,9 +25,10 @@ public class RuneSpawner : MonoBehaviour
 
     private Vector2 firstCellPosition;
     private Vector2 cellSize;
-    private float runeZ = -1f;
+    private readonly float runeZ = -1f;
 
     private ScoreTracker scoreTracker;
+    private ICascadeRefiller cascadeRefiller;
 
     private void Awake()
     {
@@ -38,6 +42,14 @@ public class RuneSpawner : MonoBehaviour
         Vector2 lastCellPosition = lastCell.transform.position;
         cellSize = (lastCellPosition - firstCellPosition) / new Vector2(numberOfRows - 1, numberOfCols - 1);
 
+        cascadeRefiller = cascadeRefillStrategy switch
+        {
+            CascadeRefillStrategy.Level1 => new Level1CascadeRefiller(),
+            CascadeRefillStrategy.Level2 => new Level2CascadeRefiller(),
+            _ => null
+        };
+        Assert.IsNotNull(cascadeRefiller);
+
         FillInitialGrid();
     }
 
@@ -47,14 +59,9 @@ public class RuneSpawner : MonoBehaviour
         {
             for (int y = 0; y < numberOfRows; ++y)
             {
-                List<RuneColor> colors = new()
-                {
-                    RuneColor.Blue,
-                    RuneColor.Green,
-                    RuneColor.Purple,
-                    RuneColor.Red,
-                    RuneColor.Yellow
-                };
+                Assert.IsNull(runes[x, y]);
+
+                List<RuneColor> colors = cascadeRefiller.ColorList();
 
                 // don't allow horizontal 3+ runes of same color
                 if (x > 1)
@@ -74,22 +81,20 @@ public class RuneSpawner : MonoBehaviour
                         colors.Remove(pc1);
                 }
 
-                int colorIndex = Random.Range(0, colors.Count);
-                RuneColor color = colors[colorIndex];
-
-                Assert.IsNull(runes[x, y]);
-
-                GameObject obj = Instantiate(runePrefab, new Vector3(GetTilePositionX(x), GetTilePositionY(y), runeZ), Quaternion.identity, gridParent.transform);
-
-                Rune rune = obj.GetComponent<Rune>();
-                Assert.IsNotNull(rune);
-                rune.spawner = this;
-                rune.coordinates = new(x, y);
-                rune.Color = color;
-
-                runes[x, y] = rune;
+                runes[x, y] = NewRune(x, y, colors[Random.Range(0, colors.Count)]);
             }
         }
+    }
+
+    private Rune NewRune(int x, int y, RuneColor color)
+    {
+        GameObject obj = Instantiate(runePrefab, new Vector3(GetTilePositionX(x), GetTilePositionY(y), runeZ), Quaternion.identity, gridParent.transform);
+        Rune rune = obj.GetComponent<Rune>();
+        Assert.IsNotNull(rune);
+        rune.spawner = this;
+        rune.coordinates = new(x, y);
+        rune.Color = color;
+        return rune;
     }
 
     public void MoveRune(Vector2Int runeCoordinates, int byX, int byY)
@@ -142,7 +147,7 @@ public class RuneSpawner : MonoBehaviour
         while (elapsed < runeSwapAnimationDuration)
         {
             elapsed += Time.deltaTime;
-            float t = elapsed / runeSwapAnimationDuration;
+            float t = Mathf.Min(elapsed / runeSwapAnimationDuration, 1f);
 
             runeA.transform.position = Vector3.Lerp(posA, posB, t);
             runeB.transform.position = Vector3.Lerp(posB, posA, t);
@@ -178,7 +183,7 @@ public class RuneSpawner : MonoBehaviour
         return runes[coords.x, coords.y].HasColor();
     }
 
-    public bool IsCellEveryFilled()
+    public bool IsEveryCellFilled()
     {
         for (int x = 0; x < numberOfCols; ++x)
             for (int y = 0; y < numberOfRows; ++y)
@@ -194,29 +199,35 @@ public class RuneSpawner : MonoBehaviour
 
     public HashSet<Vector2Int> GetRuneMatches()
     {
-        Assert.IsTrue(IsCellEveryFilled());
+        Assert.IsTrue(IsEveryCellFilled());
         HashSet<Vector2Int> matches = new();
 
-        for (int x = 1; x < numberOfCols - 1; ++x)
+        for (int x = 0; x < numberOfCols; ++x)
         {
-            for (int y = 1; y < numberOfRows - 1; ++y)
+            for (int y = 0; y < numberOfRows; ++y)
             {
                 RuneColor centerColor = ColorAt(x, y);
 
-                // Check horizontal
-                if (ColorAt(x - 1, y) == centerColor && ColorAt(x + 1, y) == centerColor)
+                if (x > 0 && x + 1 < numberOfCols)
                 {
-                    matches.Add(new Vector2Int(x, y));
-                    matches.Add(new Vector2Int(x - 1, y));
-                    matches.Add(new Vector2Int(x + 1, y));
+                    // Check horizontal
+                    if (ColorAt(x - 1, y) == centerColor && ColorAt(x + 1, y) == centerColor)
+                    {
+                        matches.Add(new Vector2Int(x, y));
+                        matches.Add(new Vector2Int(x - 1, y));
+                        matches.Add(new Vector2Int(x + 1, y));
+                    }
                 }
 
-                // Check vertical
-                if (ColorAt(x, y - 1) == centerColor && ColorAt(x, y + 1) == centerColor)
+                if (y > 0 && y + 1 < numberOfRows)
                 {
-                    matches.Add(new Vector2Int(x, y));
-                    matches.Add(new Vector2Int(x, y - 1));
-                    matches.Add(new Vector2Int(x, y + 1));
+                    // Check vertical
+                    if (ColorAt(x, y - 1) == centerColor && ColorAt(x, y + 1) == centerColor)
+                    {
+                        matches.Add(new Vector2Int(x, y));
+                        matches.Add(new Vector2Int(x, y - 1));
+                        matches.Add(new Vector2Int(x, y + 1));
+                    }
                 }
             }
         }
@@ -235,10 +246,8 @@ public class RuneSpawner : MonoBehaviour
 
     public IEnumerator Cascade()
     {
-        // TODO new runes drop into empty spaces - logic depends on the level #
-
-        Dictionary<Vector2Int, int> fallTranslations = new();
-        int maxFallOffset = 0;
+        Assert.IsFalse(IsEveryCellFilled());
+        List<(Vector2Int, int)> fallTranslations = new();
         for (int x = 0; x < numberOfCols; ++x)
         {
             int fallOffset = 0;
@@ -247,18 +256,17 @@ public class RuneSpawner : MonoBehaviour
                 if (runes[x, y].HasColor())
                 {
                     if (fallOffset > 0)
-                        fallTranslations[new(x, y)] = fallOffset;
+                        fallTranslations.Add((new(x, y), fallOffset));
                 }
                 else
                     ++fallOffset;
             }
-            if (fallOffset > maxFallOffset)
-                maxFallOffset = fallOffset;
         }
-        yield return AnimateCascade(fallTranslations, maxFallOffset);
+        if (fallTranslations.Count > 0)
+            yield return AnimateCascade(fallTranslations);
 
         Dictionary<Vector2Int, RuneColor> preMoveColors = new();
-        foreach (Vector2Int coords in fallTranslations.Keys)
+        foreach ((Vector2Int coords, _) in fallTranslations)
         {
             Rune rune = runes[coords.x, coords.y];
             preMoveColors[coords] = rune.GetColor();
@@ -268,20 +276,35 @@ public class RuneSpawner : MonoBehaviour
 
         foreach ((Vector2Int coords, int fallOffset) in fallTranslations)
             runes[coords.x, coords.y - fallOffset].Color = preMoveColors[coords];
+
+        List<Vector2Int> newRunes = new();
+        for (int x = 0; x < numberOfCols; ++x)
+        {
+            for (int y = 0; y < numberOfRows; ++y)
+            {
+                if (!runes[x, y].HasColor())
+                {
+                    // TODO use refiller to generate color
+                    List<RuneColor> colors = cascadeRefiller.ColorList();
+                    runes[x, y].Color = colors[Random.Range(0, colors.Count)];
+                    newRunes.Add(new(x, y));
+                }
+            }
+        }
+        yield return AnimateNewRuneSpawn(newRunes);
     }
 
-    private IEnumerator AnimateCascade(Dictionary<Vector2Int, int> fallTranslations, int maxFallOffset)
+    private IEnumerator AnimateCascade(List<(Vector2Int coords, int fallOffset)> fallTranslations)
     {
-        float fallingDuration = maxFallOffset / runeFallSpeed;
+        Assert.IsTrue(fallTranslations.Count > 0);
+        float fallingDuration = fallTranslations.Max(((Vector2Int, int fallOffset) t) => t.fallOffset) / runeFallSpeed;
         float elapsed = 0f;
         while (elapsed < fallingDuration)
         {
             elapsed += Time.deltaTime;
             foreach ((Vector2Int coords, int fallOffset) in fallTranslations)
             {
-                float t = elapsed * runeFallSpeed / fallOffset;
-                if (t > 1f)
-                    t = 1f;
+                float t = Mathf.Min(elapsed * runeFallSpeed / fallOffset, 1f);
                 runes[coords.x, coords.y].transform.position = Vector3.Lerp(
                     new Vector3(GetTilePositionX(coords.x), GetTilePositionY(coords.y), runeZ),
                     new Vector3(GetTilePositionX(coords.x), GetTilePositionY(coords.y - fallOffset), runeZ),
@@ -291,7 +314,24 @@ public class RuneSpawner : MonoBehaviour
             yield return null;
         }
 
-        foreach (var (coords, fallOffset) in fallTranslations)
+        foreach ((Vector2Int coords, int fallOffset) in fallTranslations)
             runes[coords.x, coords.y].transform.position = new Vector3(GetTilePositionX(coords.x), GetTilePositionY(coords.y - fallOffset), runeZ);
+    }
+
+    private IEnumerator AnimateNewRuneSpawn(List<Vector2Int> newRunes)
+    {
+        Assert.IsTrue(newRunes.Count > 0);
+        float elapsed = 0f;
+        while (elapsed < runeSpawnAnimationDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Min(elapsed / runeSpawnAnimationDuration, 1f);
+            foreach(Vector2Int coords in newRunes)
+                runes[coords.x, coords.y].transform.localScale = new Vector3(Mathf.Lerp(0f, 1f, t), Mathf.Lerp(0f, 1f, t), 1f);
+            yield return null;
+        }
+
+        foreach (Vector2Int coords in newRunes)
+            runes[coords.x, coords.y].transform.localScale = new Vector3(1f, 1f, 1f);
     }
 }

@@ -25,6 +25,7 @@ public class ScoreTracker : MonoBehaviour
         targetRune = (RuneColor)Random.Range(0, 5);
         hud.SetRuneToMatchImage(targetRune);
         runesLeft = initialRunesLeft;
+        hud.SetNumberOfRunesLeftText(runesLeft);
     }
 
     public LevelHUDController GetHUD()
