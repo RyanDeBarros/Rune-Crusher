@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Timers;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -16,6 +17,7 @@ public class RuneSpawner : MonoBehaviour
 
     [Header("Animation")]
     [SerializeField] private float runeSwapAnimationDuration = 0.05f;
+    [SerializeField] private float runeConsumeAnimationDuration = 0.05f;
     [SerializeField] private float runeFallSpeed = 5f;
     [SerializeField] private float runeSpawnAnimationDuration = 0.05f;
 
@@ -235,13 +237,35 @@ public class RuneSpawner : MonoBehaviour
         return matches;
     }
 
-    public void ConsumeRunes(HashSet<Vector2Int> matches)
+    public IEnumerator ConsumeRunes(HashSet<Vector2Int> matches)
     {
         foreach (Vector2Int match in matches)
-        {
             scoreTracker.TryToCollectTargetRune(ColorAt(match.x, match.y));
-            runes[match.x, match.y].Color = null;
+
+        yield return AnimateConsumingRunes(matches);
+
+        foreach (Vector2Int match in matches)
+        {
+            Rune rune = runes[match.x, match.y];
+            rune.Color = null;
+            rune.transform.localScale = Vector3.one;
         }
+    }
+
+    private IEnumerator AnimateConsumingRunes(HashSet<Vector2Int> matches)
+    {
+        float elapsed = 0f;
+        while (elapsed < runeConsumeAnimationDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Min(elapsed / runeConsumeAnimationDuration, 1f);
+            foreach (Vector2Int match in matches)
+                runes[match.x, match.y].transform.localScale = new Vector3(Mathf.Lerp(1f, 0f, t), Mathf.Lerp(1f, 0f, t), 1f);
+            yield return null;
+        }
+
+        foreach (Vector2Int match in matches)
+            runes[match.x, match.y].transform.localScale = Vector3.zero;
     }
 
     public IEnumerator Cascade()
@@ -346,6 +370,6 @@ public class RuneSpawner : MonoBehaviour
         }
 
         foreach (Vector2Int coords in newRunes)
-            runes[coords.x, coords.y].transform.localScale = new Vector3(1f, 1f, 1f);
+            runes[coords.x, coords.y].transform.localScale = Vector3.one;
     }
 }

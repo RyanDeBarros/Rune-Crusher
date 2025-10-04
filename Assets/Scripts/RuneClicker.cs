@@ -113,7 +113,7 @@ public class RuneClicker : MonoBehaviour
             if (matched)
             {
                 score += scoreTracker.CalculateScore(matches, cascadeLevel++);
-                spawner.ConsumeRunes(matches);
+                yield return spawner.ConsumeRunes(matches);
                 yield return spawner.Cascade();
             }
         }
