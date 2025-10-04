@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Level2CascadeRefiller : ICascadeRefiller
 {
-    public RuneColor GenerateColor(RuneNeighbourhood neighbourhood)
+    public RuneColor GenerateColor(RuneNeighbourhood neighbourhood, RuneMatchType matchType, bool firstTilePlacedInColumn)
     {
         List<RuneColor> colors = ((ICascadeRefiller)this).ColorList();
 

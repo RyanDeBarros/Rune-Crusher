@@ -14,7 +14,6 @@ public class LevelCompleteHUDController : MonoBehaviour
     [SerializeField] private RawImage star1, star2, star3;
     [SerializeField] private Texture starTexture, noStarTexture;
 
-    // TODO playtest thresholds
     [SerializeField] private int oneStarScoreThreshold = 100, twoStarsScoreThreshold = 500, threeStarsScoreThreshold = 1000;
 
     public string levelName;

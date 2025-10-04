@@ -108,13 +108,14 @@ public class RuneClicker : MonoBehaviour
 
         do
         {
-            HashSet<Vector2Int> matches = spawner.GetRuneMatches();
+            var matches = spawner.GetRuneMatches();
             matched = matches.Count > 0;
             if (matched)
             {
-                score += scoreTracker.CalculateScore(matches, cascadeLevel++);
-                yield return spawner.ConsumeRunes(matches);
-                yield return spawner.Cascade();
+                var matchKeys = matches.Keys.ToHashSet();
+                score += scoreTracker.CalculateScore(matchKeys, cascadeLevel++);
+                yield return spawner.ConsumeRunes(matchKeys);
+                yield return spawner.Cascade(matches);
             }
         }
         while (matched);

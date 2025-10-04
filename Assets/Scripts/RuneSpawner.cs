@@ -5,6 +5,7 @@ using System.Linq;
 using System.Timers;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Rendering;
 
 public class RuneSpawner : MonoBehaviour
 {
@@ -199,10 +200,16 @@ public class RuneSpawner : MonoBehaviour
         return runes[x, y].GetColor();
     }
 
-    public HashSet<Vector2Int> GetRuneMatches()
+    public Dictionary<Vector2Int, RuneMatchType> GetRuneMatches()
     {
         Assert.IsTrue(IsEveryCellFilled());
-        HashSet<Vector2Int> matches = new();
+        Dictionary<Vector2Int, RuneMatchType> matches = new();
+
+        void AssignMatch(int x, int y, RuneMatchType matchType)
+        {
+            if (!matches.ContainsKey(new(x, y)) || matches[new(x, y)] == RuneMatchType.Horizontal) // vertical overrides horizontal
+                matches[new(x, y)] = matchType;
+        }
 
         for (int x = 0; x < numberOfCols; ++x)
         {
@@ -215,9 +222,9 @@ public class RuneSpawner : MonoBehaviour
                     // Check horizontal
                     if (ColorAt(x - 1, y) == centerColor && ColorAt(x + 1, y) == centerColor)
                     {
-                        matches.Add(new Vector2Int(x, y));
-                        matches.Add(new Vector2Int(x - 1, y));
-                        matches.Add(new Vector2Int(x + 1, y));
+                        AssignMatch(x, y, RuneMatchType.Horizontal);
+                        AssignMatch(x - 1, y, RuneMatchType.Horizontal);
+                        AssignMatch(x + 1, y, RuneMatchType.Horizontal);
                     }
                 }
 
@@ -226,9 +233,9 @@ public class RuneSpawner : MonoBehaviour
                     // Check vertical
                     if (ColorAt(x, y - 1) == centerColor && ColorAt(x, y + 1) == centerColor)
                     {
-                        matches.Add(new Vector2Int(x, y));
-                        matches.Add(new Vector2Int(x, y - 1));
-                        matches.Add(new Vector2Int(x, y + 1));
+                        AssignMatch(x, y, RuneMatchType.Vertical);
+                        AssignMatch(x, y - 1, RuneMatchType.Vertical);
+                        AssignMatch(x, y + 1, RuneMatchType.Vertical);
                     }
                 }
             }
@@ -268,9 +275,11 @@ public class RuneSpawner : MonoBehaviour
             runes[match.x, match.y].transform.localScale = Vector3.zero;
     }
 
-    public IEnumerator Cascade()
+    public IEnumerator Cascade(Dictionary<Vector2Int, RuneMatchType> matches)
     {
         Assert.IsFalse(IsEveryCellFilled());
+        Dictionary<Vector2Int, Vector2Int> matchToSpawnCoordinates = new();
+
         List<(Vector2Int, int)> fallTranslations = new();
         for (int x = 0; x < numberOfCols; ++x)
         {
@@ -285,6 +294,10 @@ public class RuneSpawner : MonoBehaviour
                 else
                     ++fallOffset;
             }
+
+            if (fallOffset > 0)
+                foreach (Vector2Int match in matches.Keys.Where(match => match.x == x).OrderBy(match => match.y))
+                    matchToSpawnCoordinates[match] = new(match.x, numberOfRows - fallOffset--);
         }
         if (fallTranslations.Count > 0)
             yield return AnimateCascade(fallTranslations);
@@ -301,18 +314,19 @@ public class RuneSpawner : MonoBehaviour
         foreach ((Vector2Int coords, int fallOffset) in fallTranslations)
             runes[coords.x, coords.y - fallOffset].Color = preMoveColors[coords];
 
+        Dictionary<int, int> minYPerColumn = new();
+        foreach(Vector2Int coords in matches.Keys)
+            if (!minYPerColumn.ContainsKey(coords.x) || coords.y < minYPerColumn[coords.x])
+                minYPerColumn[coords.x] = coords.y;
+
         List<Vector2Int> newRunes = new();
-        for (int x = 0; x < numberOfCols; ++x)
+        foreach ((Vector2Int match, RuneMatchType matchType) in matches)
         {
-            for (int y = 0; y < numberOfRows; ++y)
-            {
-                if (!runes[x, y].HasColor())
-                {
-                    runes[x, y].Color = cascadeRefiller.GenerateColor(GetRuneNeighbourhood(x, y));
-                    newRunes.Add(new(x, y));
-                }
-            }
+            Vector2Int spawnCoordinates = matchToSpawnCoordinates[match];
+            runes[spawnCoordinates.x, spawnCoordinates.y].Color = cascadeRefiller.GenerateColor(GetRuneNeighbourhood(spawnCoordinates.x, spawnCoordinates.y), matchType, match.y == minYPerColumn[match.x]);
+            newRunes.Add(spawnCoordinates);
         }
+
         yield return AnimateNewRuneSpawn(newRunes);
     }
 

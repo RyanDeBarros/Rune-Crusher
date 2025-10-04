@@ -5,6 +5,12 @@ public class RuneNeighbourhood
     public readonly RuneColor?[,] colors = new RuneColor?[3, 3];
 }
 
+public enum RuneMatchType
+{
+    Vertical,
+    Horizontal
+}
+
 public interface ICascadeRefiller
 {
     public List<RuneColor> ColorList()
@@ -19,7 +25,7 @@ public interface ICascadeRefiller
         };
     }
 
-    public RuneColor GenerateColor(RuneNeighbourhood neighbourhood);
+    public RuneColor GenerateColor(RuneNeighbourhood neighbourhood, RuneMatchType matchType, bool firstTilePlacedInColumn);
 }
 
 public enum CascadeRefillStrategy
