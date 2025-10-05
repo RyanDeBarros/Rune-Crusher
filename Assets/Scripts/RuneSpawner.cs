@@ -14,7 +14,7 @@ public class RuneSpawner : MonoBehaviour
     [SerializeField] private CascadeRefillStrategy cascadeRefillStrategy;
 
     [Header("Animation")]
-    [SerializeField] private float runeSwapAnimationDuration = 0.05f;
+    [SerializeField] private float runeSwapAnimationDuration = 0.2f;
     [SerializeField] private float runeConsumeAnimationDuration = 0.05f;
     [SerializeField] private float runeFallSpeed = 5f;
     [SerializeField] private float runeSpawnAnimationDuration = 0.05f;

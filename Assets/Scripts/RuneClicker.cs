@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class RuneClicker : MonoBehaviour
 {
@@ -101,6 +104,23 @@ public class RuneClicker : MonoBehaviour
         yield return spawner.SwapRunes(fromCoordinates, toCoordinates);
 
         int score = 0;
+        yield return ComputeScore(result => score = result);
+
+        if (score > 0)
+        {
+            paused = false;
+            UpdateScore(score);
+        }
+        else
+        {
+            yield return spawner.SwapRunes(fromCoordinates, toCoordinates);
+            paused = false;
+        }
+    }
+
+    private IEnumerator ComputeScore(Action<int> scoreCallback)
+    {
+        int score = 0;
         int cascadeLevel = 0;
         bool matched;
 
@@ -115,14 +135,17 @@ public class RuneClicker : MonoBehaviour
                 yield return spawner.ConsumeRunes(matchKeys, runs);
                 yield return spawner.Cascade(matches);
             }
-        }
-        while (matched);
+        } while (matched);
 
-        paused = false;
+        scoreCallback.Invoke(score);
+    }
+
+    private void UpdateScore(int addScore)
+    {
         if (movesLeft > 0)
         {
             // update score
-            scoreTracker.AddScore(score);
+            scoreTracker.AddScore(addScore);
             if (!scoreTracker.HasRunesLeft())
                 hud.OpenLevelCompleteHUD(scoreTracker.GetScore());
         }

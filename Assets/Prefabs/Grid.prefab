@@ -81,11 +81,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridParent: {fileID: 7202731337371675352}
-  runePrefab: {fileID: 1264531162286799205, guid: 39bd0e3e9a122b84ca2330dc7e8f9b33, type: 3}
   firstCell: {fileID: 3331183075162044682}
   lastCell: {fileID: 134258913046122769}
-  runeSwapAnimationDuration: 0.05
+  runePrefab: {fileID: 1264531162286799205, guid: 39bd0e3e9a122b84ca2330dc7e8f9b33, type: 3}
+  cascadeRefillStrategy: 0
+  runeSwapAnimationDuration: 0.2
+  runeConsumeAnimationDuration: 0.05
   runeFallSpeed: 5
+  runeSpawnAnimationDuration: 0.05
 --- !u!114 &7776851194042036441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -101,7 +104,11 @@ MonoBehaviour:
   hud: {fileID: 0}
   scorePerMatch: 10
   cascadeMultiplier: 2
-  initialRunesLeft: 20
+  initialBlueRunesLeft: 3
+  initialGreenRunesLeft: 3
+  initialPurpleRunesLeft: 3
+  initialRedRunesLeft: 3
+  initialYellowRunesLeft: 3
 --- !u!114 &7465839152580280596
 MonoBehaviour:
   m_ObjectHideFlags: 0

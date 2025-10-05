@@ -259,10 +259,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2475628446402610706, guid: f8a9e05af5a2e994d978167c814d3fe7, type: 3}
-      propertyPath: runeSwapAnimationDuration
-      value: 0.05
-      objectReference: {fileID: 0}
     - target: {fileID: 4799442961042090655, guid: f8a9e05af5a2e994d978167c814d3fe7, type: 3}
       propertyPath: levelName
       value: Level #1

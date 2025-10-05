@@ -16,7 +16,6 @@ public class ScoreTracker : MonoBehaviour
     [SerializeField] private int initialRedRunesLeft = 3;
     [SerializeField] private int initialYellowRunesLeft = 3;
 
-    // TODO disallow swap if it doesn't result in a match - do animation for this.
     // TODO if no possible moves left, reshuffle the runes (call FillGrid() until moves are possible).
     // TODO SFX
     // TODO music
