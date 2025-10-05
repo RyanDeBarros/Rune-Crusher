@@ -25,7 +25,9 @@ public class RuneSpawner : MonoBehaviour
 
     private Vector2 firstCellPosition;
     private Vector2 cellSize;
-    private readonly float runeZ = -1f;
+    private static readonly float runeZ = -1f;
+    private static readonly int rowRunLength = 3;
+    private static readonly int colRunLength = 3;
 
     private ScoreTracker scoreTracker;
     private ICascadeRefiller cascadeRefiller;
@@ -84,7 +86,10 @@ public class RuneSpawner : MonoBehaviour
                 coordinates.Add(new(x, y));
             }
         }
-        yield return AnimateNewRuneSpawn(coordinates);
+        if (AreMovesPossible())
+            yield return AnimateNewRuneSpawn(coordinates);
+        else
+            yield return FillGrid();
     }
 
     private Rune NewRune(int x, int y, RuneColor color)
@@ -198,9 +203,10 @@ public class RuneSpawner : MonoBehaviour
         return runes[x, y].GetColor();
     }
 
-    public void ComputeRuneMatches(out Dictionary<Vector2Int, RuneMatchType> matches, out Dictionary<RuneColor, int> runs, int rowRunLength = 3, int colRunLength = 3)
+    public void ComputeRuneMatches(out Dictionary<Vector2Int, RuneMatchType> matches, out Dictionary<RuneColor, int> runs)
     {
         Assert.IsTrue(IsEveryCellFilled());
+
         matches = new();
         runs = new();
 
@@ -285,6 +291,65 @@ public class RuneSpawner : MonoBehaviour
         }
     }
 
+    public bool AreMovesPossible()
+    {
+        Assert.IsTrue(IsEveryCellFilled());
+
+        RuneColor[,] colorGrid = new RuneColor[numberOfCols, numberOfRows];
+        Enumerable.Range(0, numberOfCols).ToList().ForEach(x => Enumerable.Range(0, numberOfRows).ToList().ForEach(y => colorGrid[x, y] = runes[x, y].GetColor()));
+        
+        bool IsPartOfVerticalRun(int x, int y)
+        {
+            bool SameColor(int ny)
+            {
+                return ny >= 0 && ny < numberOfRows && colorGrid[x, ny] == colorGrid[x, y];
+            }
+
+            return (SameColor(y - 1) && (SameColor(y - 2) || SameColor(y + 1))) || (SameColor(y + 1) && SameColor(y + 2));
+        }
+
+        bool IsPartOfHorizontalRun(int x, int y)
+        {
+            bool SameColor(int nx)
+            {
+                return nx >= 0 && nx < numberOfCols && colorGrid[nx, y] == colorGrid[x, y];
+            }
+
+            return (SameColor(x - 1) && (SameColor(x - 2) || SameColor(x + 1))) || (SameColor(x + 1) && SameColor(x + 2));
+        }
+
+        bool IsPartOfRun(int x, int y)
+        {
+            return IsPartOfVerticalRun(x, y) || IsPartOfHorizontalRun(x, y);
+        }
+
+        // Check for horizontal swaps
+        for (int y = 0; y < numberOfRows; ++y)
+        {
+            for (int x = 0; x + 1 < numberOfCols; ++x)
+            {
+                (colorGrid[x, y], colorGrid[x + 1, y]) = (colorGrid[x + 1, y], colorGrid[x, y]);
+                if (IsPartOfRun(x, y) || IsPartOfRun(x + 1, y))
+                    return true;
+                (colorGrid[x, y], colorGrid[x + 1, y]) = (colorGrid[x + 1, y], colorGrid[x, y]);
+            }
+        }
+
+        // Check for vertical swaps
+        for (int x = 0; x < numberOfCols; ++x)
+        {
+            for (int y = 0; y + 1 < numberOfRows; ++y)
+            {
+                (colorGrid[x, y], colorGrid[x, y + 1]) = (colorGrid[x, y + 1], colorGrid[x, y]);
+                if (IsPartOfRun(x, y) || IsPartOfRun(x, y + 1))
+                    return true;
+                (colorGrid[x, y], colorGrid[x, y + 1]) = (colorGrid[x, y + 1], colorGrid[x, y]);
+            }
+        }
+
+        return false;
+    }
+
     public IEnumerator ConsumeRunes(HashSet<Vector2Int> matches, Dictionary<RuneColor, int> runs)
     {
         foreach ((RuneColor color, int number) in runs)
@@ -324,7 +389,12 @@ public class RuneSpawner : MonoBehaviour
             yield return AnimateCascade(fallTranslations);
         ResetCascadedRunes(fallTranslations);
         GenerateNewRunes(matches, matchToSpawnCoordinates);
-        yield return AnimateNewRuneSpawn(matchToSpawnCoordinates.Values.ToList());
+            yield return AnimateNewRuneSpawn(matchToSpawnCoordinates.Values.ToList());
+        if (!AreMovesPossible())
+        {
+            yield return AnimateFullGridDespawn();
+            yield return FillGrid();
+        }
     }
 
     private Dictionary<Vector2Int, int> ComputeFallTranslations(Dictionary<Vector2Int, RuneMatchType> matches, out Dictionary<Vector2Int, Vector2Int> matchToSpawnCoordinates)
@@ -429,12 +499,30 @@ public class RuneSpawner : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float t = Mathf.Min(elapsed / runeSpawnAnimationDuration, 1f);
+            float scale = Mathf.Lerp(0f, 1f, t);
             foreach(Vector2Int coords in newRunes)
-                runes[coords.x, coords.y].transform.localScale = new Vector3(Mathf.Lerp(0f, 1f, t), Mathf.Lerp(0f, 1f, t), 1f);
+                runes[coords.x, coords.y].transform.localScale = new Vector3(scale, scale, 1f);
             yield return null;
         }
 
         foreach (Vector2Int coords in newRunes)
             runes[coords.x, coords.y].transform.localScale = Vector3.one;
+    }
+
+    private IEnumerator AnimateFullGridDespawn()
+    {
+        float elapsed = 0f;
+        while (elapsed < runeConsumeAnimationDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Min(elapsed / runeConsumeAnimationDuration, 1f);
+            float scale = Mathf.Lerp(1f, 0f, t);
+            foreach (Rune rune in runes)
+                rune.transform.localScale = new Vector3(scale, scale, 1f);
+            yield return null;
+        }
+
+        foreach (Rune rune in runes)
+            rune.transform.localScale = Vector3.zero;
     }
 }
