@@ -16,13 +16,12 @@ public class ScoreTracker : MonoBehaviour
     [SerializeField] private int initialRedRunesLeft = 3;
     [SerializeField] private int initialYellowRunesLeft = 3;
 
-    // TODO there should not be a target rune - must match 3 combos of each color. A combo is a match of 3+ runes. Re-playtest for proper star score thresholds.
-
     // TODO disallow swap if it doesn't result in a match - do animation for this.
     // TODO if no possible moves left, reshuffle the runes (call FillGrid() until moves are possible).
     // TODO SFX
     // TODO music
     // TODO spice up UI / background
+    // TODO playtest for ideal star score thresholds.
     // TODO bonus: scoring VFX
 
     private int score;
