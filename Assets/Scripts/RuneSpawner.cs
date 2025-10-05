@@ -198,54 +198,97 @@ public class RuneSpawner : MonoBehaviour
         return runes[x, y].GetColor();
     }
 
-    public Dictionary<Vector2Int, RuneMatchType> GetRuneMatches()
+    public void ComputeRuneMatches(out Dictionary<Vector2Int, RuneMatchType> matches, out Dictionary<RuneColor, int> runs, int rowRunLength = 3, int colRunLength = 3)
     {
         Assert.IsTrue(IsEveryCellFilled());
-        Dictionary<Vector2Int, RuneMatchType> matches = new();
+        matches = new();
+        runs = new();
 
-        void AssignMatch(int x, int y, RuneMatchType matchType)
+        static void IncrementRun(Dictionary<RuneColor, int> runs, RuneColor color)
         {
-            if (!matches.ContainsKey(new(x, y)) || matches[new(x, y)] == RuneMatchType.Horizontal) // vertical overrides horizontal
-                matches[new(x, y)] = matchType;
+            if (runs.ContainsKey(color))
+                ++runs[color];
+            else
+                runs[color] = 1;
         }
 
-        for (int x = 0; x < numberOfCols; ++x)
+        static void FillHorizontalMatches(Dictionary<Vector2Int, RuneMatchType> matches, int x, int y, int runLength)
         {
-            for (int y = 0; y < numberOfRows; ++y)
+            for (int offset = 1; offset <= runLength; ++offset)
+                matches[new(x - offset, y)] = RuneMatchType.Horizontal;
+        }
+
+        static void FillVerticalMatches(Dictionary<Vector2Int, RuneMatchType> matches, int x, int y, int runLength)
+        {
+            for (int offset = 1; offset <= runLength; ++offset)
+                matches[new(x, y - offset)] = RuneMatchType.Vertical;
+        }
+
+        // Check for horizontal runs
+        for (int y = 0; y < numberOfRows; ++y)
+        {
+            int runLength = 1;
+            int x = 0;
+            RuneColor currentColor = ColorAt(x++, y);
+            while (x < numberOfCols)
             {
-                RuneColor centerColor = ColorAt(x, y);
-
-                if (x > 0 && x + 1 < numberOfCols)
+                RuneColor stepColor = ColorAt(x++, y);
+                if (stepColor == currentColor)
+                    ++runLength;
+                else
                 {
-                    // Check horizontal
-                    if (ColorAt(x - 1, y) == centerColor && ColorAt(x + 1, y) == centerColor)
+                    if (runLength >= rowRunLength)
                     {
-                        AssignMatch(x, y, RuneMatchType.Horizontal);
-                        AssignMatch(x - 1, y, RuneMatchType.Horizontal);
-                        AssignMatch(x + 1, y, RuneMatchType.Horizontal);
+                        IncrementRun(runs, currentColor);
+                        FillHorizontalMatches(matches, x - 1, y, runLength);
                     }
+                    runLength = 1;
+                    currentColor = stepColor;
                 }
+            }
 
-                if (y > 0 && y + 1 < numberOfRows)
-                {
-                    // Check vertical
-                    if (ColorAt(x, y - 1) == centerColor && ColorAt(x, y + 1) == centerColor)
-                    {
-                        AssignMatch(x, y, RuneMatchType.Vertical);
-                        AssignMatch(x, y - 1, RuneMatchType.Vertical);
-                        AssignMatch(x, y + 1, RuneMatchType.Vertical);
-                    }
-                }
+            if (runLength >= rowRunLength)
+            {
+                IncrementRun(runs, currentColor);
+                FillHorizontalMatches(matches, x, y, runLength);
             }
         }
 
-        return matches;
+        // Check for vertical runs - if cell is part of horizontal and vertical run, consider it as being vertical
+        for (int x = 0; x < numberOfCols; ++x)
+        {
+            int runLength = 1;
+            int y = 0;
+            RuneColor currentColor = ColorAt(x, y++);
+            while (y < numberOfRows)
+            {
+                RuneColor stepColor = ColorAt(x, y++);
+                if (stepColor == currentColor)
+                    ++runLength;
+                else
+                {
+                    if (runLength >= colRunLength)
+                    {
+                        IncrementRun(runs, currentColor);
+                        FillVerticalMatches(matches, x, y - 1, runLength);
+                    }
+                    runLength = 1;
+                    currentColor = stepColor;
+                }
+            }
+
+            if (runLength >= colRunLength)
+            {
+                IncrementRun(runs, currentColor);
+                FillVerticalMatches(matches, x, y, runLength);
+            }
+        }
     }
 
-    public IEnumerator ConsumeRunes(HashSet<Vector2Int> matches)
+    public IEnumerator ConsumeRunes(HashSet<Vector2Int> matches, Dictionary<RuneColor, int> runs)
     {
-        foreach (Vector2Int match in matches)
-            scoreTracker.TryToCollectTargetRune(ColorAt(match.x, match.y));
+        foreach ((RuneColor color, int number) in runs)
+            scoreTracker.MakeMatches(color, number);
 
         yield return AnimateConsumingRunes(matches);
 

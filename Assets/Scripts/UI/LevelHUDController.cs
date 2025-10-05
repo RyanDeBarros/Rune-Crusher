@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Assertions;
@@ -8,23 +9,24 @@ public class LevelHUDController : MonoBehaviour
 {
     [SerializeField] private GameObject pauseCanvas;
     [SerializeField] private TextMeshProUGUI scoreText;
-    [SerializeField] private TextMeshProUGUI runesLeftText;
     [SerializeField] private TextMeshProUGUI timeRemainingText;
     [SerializeField] private TextMeshProUGUI movesLeftText;
     [SerializeField] private TextMeshProUGUI levelNameText;
-    [SerializeField] private RawImage runeToMatch;
     [SerializeField] private string levelName;
     [SerializeField] private RuneClicker clicker;
     [SerializeField] private GameObject gameOverHUDPrefab;
     [SerializeField] private GameObject levelCompleteHUDPrefab;
     [SerializeField] private int timeRemaining = 90;
 
-    [Header("Images")]
-    [SerializeField] private Texture blueRuneTexture;
-    [SerializeField] private Texture greenRuneTexture;
-    [SerializeField] private Texture purpleRuneTexture;
-    [SerializeField] private Texture redRuneTexture;
-    [SerializeField] private Texture yellowRuneTexture;
+    [Header("Runes left")]
+    [SerializeField] private TextMeshProUGUI blueRunesLeftText;
+    [SerializeField] private TextMeshProUGUI greenRunesLeftText;
+    [SerializeField] private TextMeshProUGUI purpleRunesLeftText;
+    [SerializeField] private TextMeshProUGUI redRunesLeftText;
+    [SerializeField] private TextMeshProUGUI yellowRunesLeftText;
+
+    [SerializeField] private float runesLeftUpdateAnimationLength = 0.3f;
+    [SerializeField] private float runesLeftUpdateMaxScale = 3f;
 
     private bool isPlaying = true;
     private float timeRemainingFloat = 0f;
@@ -40,10 +42,15 @@ public class LevelHUDController : MonoBehaviour
         }
 
         Assert.IsNotNull(scoreText);
-        Assert.IsNotNull(runesLeftText);
+
+        Assert.IsNotNull(blueRunesLeftText);
+        Assert.IsNotNull(greenRunesLeftText);
+        Assert.IsNotNull(purpleRunesLeftText);
+        Assert.IsNotNull(redRunesLeftText);
+        Assert.IsNotNull(yellowRunesLeftText);
+
         Assert.IsNotNull(timeRemainingText);
         Assert.IsNotNull(movesLeftText);
-        Assert.IsNotNull(runeToMatch);
         Assert.IsNotNull(levelNameText);
         levelNameText.SetText(levelName);
 
@@ -102,9 +109,37 @@ public class LevelHUDController : MonoBehaviour
         scoreText.SetText($"Score: {score}");
     }
 
-    public void SetNumberOfRunesLeftText(int runesLeft)
+    public void SetNumberOfRunesLeftText(RuneColor color, int runesLeft)
     {
-        runesLeftText.SetText($"Runes left: {runesLeft}");
+        TextMeshProUGUI runesLeftText = color switch
+        {
+            RuneColor.Blue => blueRunesLeftText,
+            RuneColor.Green => greenRunesLeftText,
+            RuneColor.Purple => purpleRunesLeftText,
+            RuneColor.Red => redRunesLeftText,
+            RuneColor.Yellow => yellowRunesLeftText,
+            _ => null
+        };
+        Assert.IsNotNull(runesLeftText);
+        runesLeftText.SetText($"{runesLeft}");
+        StartCoroutine(AnimateNumberOfRunes(runesLeftText));
+    }
+
+    private IEnumerator AnimateNumberOfRunes(TextMeshProUGUI text)
+    {
+        text.transform.localScale = new Vector3(runesLeftUpdateMaxScale, runesLeftUpdateMaxScale, 1f);
+
+        float elapsed = 0f;
+        while (elapsed < runesLeftUpdateAnimationLength)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / runesLeftUpdateAnimationLength;
+            float scale = Mathf.Lerp(runesLeftUpdateMaxScale, 1f, t);
+            text.transform.localScale = new Vector3(scale, scale, 1f);
+            yield return null;
+        }
+
+        text.transform.localScale = new Vector3(1f, 1f, 1f);
     }
 
     private void SetTimeRemainingText()
@@ -115,18 +150,6 @@ public class LevelHUDController : MonoBehaviour
     public void SetMovesLeftText(int movesLeft)
     {
         movesLeftText.SetText($"Moves left: {movesLeft}");
-    }
-
-    public void SetRuneToMatchImage(RuneColor color)
-    {
-        runeToMatch.texture = color switch {
-            RuneColor.Blue => blueRuneTexture,
-            RuneColor.Green => greenRuneTexture,
-            RuneColor.Purple => purpleRuneTexture,
-            RuneColor.Red => redRuneTexture,
-            RuneColor.Yellow => yellowRuneTexture,
-            _ => null
-        };
     }
 
     public void OpenGameOverHUD(GameOverCause cause)

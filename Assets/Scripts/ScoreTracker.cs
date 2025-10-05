@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -7,7 +8,15 @@ public class ScoreTracker : MonoBehaviour
     [SerializeField] private LevelHUDController hud;
     [SerializeField] private int scorePerMatch = 10;
     [SerializeField] private float cascadeMultiplier = 2f;
-    [SerializeField] private int initialRunesLeft = 20; // TODO there should not be a target rune - must match 3 combos of each color. A combo is a match of 3+ runes. Re-playtest for proper star score thresholds.
+
+    [Header("Initial runes left")]
+    [SerializeField] private int initialBlueRunesLeft = 3;
+    [SerializeField] private int initialGreenRunesLeft = 3;
+    [SerializeField] private int initialPurpleRunesLeft = 3;
+    [SerializeField] private int initialRedRunesLeft = 3;
+    [SerializeField] private int initialYellowRunesLeft = 3;
+
+    // TODO there should not be a target rune - must match 3 combos of each color. A combo is a match of 3+ runes. Re-playtest for proper star score thresholds.
 
     // TODO disallow swap if it doesn't result in a match - do animation for this.
     // TODO if no possible moves left, reshuffle the runes (call FillGrid() until moves are possible).
@@ -16,9 +25,8 @@ public class ScoreTracker : MonoBehaviour
     // TODO spice up UI / background
     // TODO bonus: scoring VFX
 
-    private RuneColor targetRune;
     private int score;
-    private int runesLeft;
+    readonly Dictionary<RuneColor, int> runesLeft = new();
 
     private void Awake()
     {
@@ -27,10 +35,14 @@ public class ScoreTracker : MonoBehaviour
 
     private void Start()
     {
-        targetRune = (RuneColor)Random.Range(0, 5);
-        hud.SetRuneToMatchImage(targetRune);
-        runesLeft = initialRunesLeft;
-        hud.SetNumberOfRunesLeftText(runesLeft);
+        runesLeft[RuneColor.Blue] = initialBlueRunesLeft;
+        runesLeft[RuneColor.Green] = initialGreenRunesLeft;
+        runesLeft[RuneColor.Purple] = initialPurpleRunesLeft;
+        runesLeft[RuneColor.Red] = initialRedRunesLeft;
+        runesLeft[RuneColor.Yellow] = initialYellowRunesLeft;
+
+        foreach (RuneColor color in runesLeft.Keys)
+            hud.SetNumberOfRunesLeftText(color, runesLeft[color]);
     }
 
     public LevelHUDController GetHUD()
@@ -38,12 +50,12 @@ public class ScoreTracker : MonoBehaviour
         return hud;
     }
 
-    public void TryToCollectTargetRune(RuneColor color)
+    public void MakeMatches(RuneColor color, int numberOfMatches)
     {
-        if (color == targetRune)
+        if (runesLeft[color] > 0)
         {
-            --runesLeft;
-            hud.SetNumberOfRunesLeftText(runesLeft);
+            runesLeft[color] = System.Math.Max(runesLeft[color] - numberOfMatches, 0);
+            hud.SetNumberOfRunesLeftText(color, runesLeft[color]);
         }
     }
 
@@ -52,9 +64,9 @@ public class ScoreTracker : MonoBehaviour
         return Mathf.RoundToInt(scorePerMatch * Mathf.Pow(cascadeMultiplier, cascadeLevel));
     }
 
-    public int GetRunesLeft()
+    public bool HasRunesLeft()
     {
-        return runesLeft;
+        return runesLeft.Values.Sum() > 0;
     }
 
     public int GetScore()

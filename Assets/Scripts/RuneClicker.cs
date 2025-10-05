@@ -106,13 +106,13 @@ public class RuneClicker : MonoBehaviour
 
         do
         {
-            var matches = spawner.GetRuneMatches();
+            spawner.ComputeRuneMatches(out var matches, out var runs);
             matched = matches.Count > 0;
             if (matched)
             {
                 var matchKeys = matches.Keys.ToHashSet();
                 score += scoreTracker.CalculateScore(matchKeys, cascadeLevel++);
-                yield return spawner.ConsumeRunes(matchKeys);
+                yield return spawner.ConsumeRunes(matchKeys, runs);
                 yield return spawner.Cascade(matches);
             }
         }
@@ -123,13 +123,13 @@ public class RuneClicker : MonoBehaviour
         {
             // update score
             scoreTracker.AddScore(score);
-            if (scoreTracker.GetRunesLeft() <= 0)
+            if (!scoreTracker.HasRunesLeft())
                 hud.OpenLevelCompleteHUD(scoreTracker.GetScore());
         }
         else
         {
             // end level
-            if (scoreTracker.GetRunesLeft() > 0)
+            if (scoreTracker.HasRunesLeft())
                 hud.OpenGameOverHUD(GameOverCause.OutOfMoves);
             else
                 hud.OpenLevelCompleteHUD(scoreTracker.GetScore());
