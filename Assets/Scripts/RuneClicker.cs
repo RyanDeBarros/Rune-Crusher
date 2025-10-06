@@ -153,6 +153,7 @@ public class RuneClicker : MonoBehaviour
             matched = matches.Count > 0;
             if (matched)
             {
+                matchMadeSFX.pitch = 1f + 0.1f * cascadeLevel;
                 matchMadeSFX.Play();
                 var matchKeys = matches.Keys.ToHashSet();
                 score += scoreTracker.CalculateScore(matchKeys, cascadeLevel++);

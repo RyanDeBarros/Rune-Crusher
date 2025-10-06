@@ -34,9 +34,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -10, y: -100}
+  m_AnchoredPosition: {x: -10, y: -115}
   m_SizeDelta: {x: 300, y: 30}
-  m_Pivot: {x: 1, y: 1}
+  m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &7765767933980148994
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -378,9 +378,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -10, y: -10}
+  m_AnchoredPosition: {x: -10, y: -25}
   m_SizeDelta: {x: 300, y: 30}
-  m_Pivot: {x: 1, y: 1}
+  m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &119051852450442361
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1198,8 +1198,8 @@ MonoBehaviour:
   purpleRunesLeftText: {fileID: 6963346055322218166}
   redRunesLeftText: {fileID: 3091088350610556120}
   yellowRunesLeftText: {fileID: 4526513426834368685}
-  runesLeftUpdateAnimationLength: 0.3
-  runesLeftUpdateMaxScale: 3
+  propertyUpdateAnimationLength: 0.3
+  propertyUpdateMaxScale: 3
 --- !u!1 &5906803257180570250
 GameObject:
   m_ObjectHideFlags: 0
@@ -1786,9 +1786,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -10, y: -70}
+  m_AnchoredPosition: {x: -10, y: -85}
   m_SizeDelta: {x: 300, y: 30}
-  m_Pivot: {x: 1, y: 1}
+  m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &5404078595998411053
 CanvasRenderer:
   m_ObjectHideFlags: 0

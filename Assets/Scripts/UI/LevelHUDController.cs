@@ -25,13 +25,11 @@ public class LevelHUDController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI redRunesLeftText;
     [SerializeField] private TextMeshProUGUI yellowRunesLeftText;
 
-    [SerializeField] private float runesLeftUpdateAnimationLength = 0.3f;
-    [SerializeField] private float runesLeftUpdateMaxScale = 3f;
+    [SerializeField] private float propertyUpdateAnimationLength = 0.3f;
+    [SerializeField] private float propertyUpdateMaxScale = 3f;
 
     private bool isPlaying = true;
     private float timeRemainingFloat = 0f;
-
-    // TODO animate when moves left and score change
 
     private void Awake()
     {
@@ -109,6 +107,7 @@ public class LevelHUDController : MonoBehaviour
     public void SetScoreText(int score)
     {
         scoreText.SetText($"Score: {score}");
+        StartCoroutine(AnimatePropertyUpdate(scoreText.transform));
     }
 
     public void SetNumberOfRunesLeftText(RuneColor color, int runesLeft)
@@ -124,34 +123,20 @@ public class LevelHUDController : MonoBehaviour
         };
         Assert.IsNotNull(runesLeftText);
         runesLeftText.SetText($"{runesLeft}");
-        StartCoroutine(AnimateNumberOfRunes(runesLeftText));
-    }
-
-    private IEnumerator AnimateNumberOfRunes(TextMeshProUGUI text)
-    {
-        text.transform.localScale = new Vector3(runesLeftUpdateMaxScale, runesLeftUpdateMaxScale, 1f);
-
-        float elapsed = 0f;
-        while (elapsed < runesLeftUpdateAnimationLength)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / runesLeftUpdateAnimationLength;
-            float scale = Mathf.Lerp(runesLeftUpdateMaxScale, 1f, t);
-            text.transform.localScale = new Vector3(scale, scale, 1f);
-            yield return null;
-        }
-
-        text.transform.localScale = new Vector3(1f, 1f, 1f);
+        StartCoroutine(AnimatePropertyUpdate(runesLeftText.transform));
     }
 
     private void SetTimeRemainingText()
     {
         timeRemainingText.SetText($"Time left: {timeRemaining}");
+        if (timeRemaining <= 10)
+            StartCoroutine(AnimatePropertyUpdate(timeRemainingText.transform));
     }
 
     public void SetMovesLeftText(int movesLeft)
     {
         movesLeftText.SetText($"Moves left: {movesLeft}");
+        StartCoroutine(AnimatePropertyUpdate(movesLeftText.transform));
     }
 
     public void OpenGameOverHUD(GameOverCause cause)
@@ -174,5 +159,22 @@ public class LevelHUDController : MonoBehaviour
         Assert.IsNotNull(controller);
         controller.SetScore(score);
         controller.levelName = levelName;
+    }
+
+    private IEnumerator AnimatePropertyUpdate(Transform property)
+    {
+        property.localScale = new Vector3(propertyUpdateMaxScale, propertyUpdateMaxScale, 1f);
+
+        float elapsed = 0f;
+        while (elapsed < propertyUpdateAnimationLength)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / propertyUpdateAnimationLength;
+            float scale = Mathf.Lerp(propertyUpdateMaxScale, 1f, t);
+            property.localScale = new Vector3(scale, scale, 1f);
+            yield return null;
+        }
+
+        property.localScale = new Vector3(1f, 1f, 1f);
     }
 }
