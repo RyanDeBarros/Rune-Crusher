@@ -19,7 +19,6 @@ public class ScoreTracker : MonoBehaviour
     // TODO SFX
     // TODO music
     // TODO spice up UI / background
-    // TODO playtest for ideal star score thresholds.
     // TODO bonus: scoring VFX
 
     private int score;

@@ -124,6 +124,9 @@ MonoBehaviour:
   swapMotionThreshold: 0.5
   hud: {fileID: 0}
   movesLeft: 15
+  swapSFXClip: {fileID: 8300000, guid: 33faf289db824b140b0c80f5f604b764, type: 3}
+  swapCancelSFXClip: {fileID: 8300000, guid: bd77ac1e2c9a69d43bbb68831a021fd7, type: 3}
+  matchMadeSFXClip: {fileID: 8300000, guid: a3609bc143abfb844a3acfbf641bdb25, type: 3}
 --- !u!1 &3331183075162044682
 GameObject:
   m_ObjectHideFlags: 0

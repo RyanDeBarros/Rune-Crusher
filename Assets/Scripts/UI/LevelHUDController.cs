@@ -31,6 +31,8 @@ public class LevelHUDController : MonoBehaviour
     private bool isPlaying = true;
     private float timeRemainingFloat = 0f;
 
+    // TODO animate when moves left and score change
+
     private void Awake()
     {
         Assert.IsNotNull(pauseCanvas);

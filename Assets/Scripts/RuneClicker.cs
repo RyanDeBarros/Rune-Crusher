@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.SocialPlatforms.Impl;
 
 public class RuneClicker : MonoBehaviour
 {
     [SerializeField] private float swapMotionThreshold = 0.5f;
     [SerializeField] private LevelHUDController hud;
     [SerializeField] public int movesLeft = 15;
+    [SerializeField] private AudioClip swapSFXClip;
+    [SerializeField] private AudioClip swapCancelSFXClip;
+    [SerializeField] private AudioClip matchMadeSFXClip;
 
     private RuneSpawner spawner;
     private ScoreTracker scoreTracker;
@@ -19,6 +21,10 @@ public class RuneClicker : MonoBehaviour
     private Vector2 clickPosition;
     private bool paused = false;
 
+    private AudioSource swapSFX;
+    private AudioSource swapCancelSFX;
+    private AudioSource matchMadeSFX;
+
     private void Awake()
     {
         spawner = GetComponent<RuneSpawner>();
@@ -26,6 +32,21 @@ public class RuneClicker : MonoBehaviour
         scoreTracker = GetComponent<ScoreTracker>();
         Assert.IsNotNull(scoreTracker);
         Assert.IsNotNull(hud);
+
+        Assert.IsNotNull(swapSFXClip);
+        swapSFX = gameObject.AddComponent<AudioSource>();
+        swapSFX.clip = swapSFXClip;
+        swapSFX.playOnAwake = false;
+
+        Assert.IsNotNull(swapCancelSFXClip);
+        swapCancelSFX = gameObject.AddComponent<AudioSource>();
+        swapCancelSFX.clip = swapCancelSFXClip;
+        swapCancelSFX.playOnAwake = false;
+
+        Assert.IsNotNull(matchMadeSFXClip);
+        matchMadeSFX = gameObject.AddComponent<AudioSource>();
+        matchMadeSFX.clip = matchMadeSFXClip;
+        matchMadeSFX.playOnAwake = false;
     }
 
     private void Start()
@@ -101,6 +122,7 @@ public class RuneClicker : MonoBehaviour
         paused = true;
         --movesLeft;
         hud.SetMovesLeftText(movesLeft);
+        swapSFX.Play();
         yield return spawner.SwapRunes(fromCoordinates, toCoordinates);
 
         int score = 0;
@@ -113,6 +135,7 @@ public class RuneClicker : MonoBehaviour
         }
         else
         {
+            swapCancelSFX.Play();
             yield return spawner.SwapRunes(fromCoordinates, toCoordinates);
             paused = false;
         }
@@ -130,6 +153,7 @@ public class RuneClicker : MonoBehaviour
             matched = matches.Count > 0;
             if (matched)
             {
+                matchMadeSFX.Play();
                 var matchKeys = matches.Keys.ToHashSet();
                 score += scoreTracker.CalculateScore(matchKeys, cascadeLevel++);
                 yield return spawner.ConsumeRunes(matchKeys, runs);
