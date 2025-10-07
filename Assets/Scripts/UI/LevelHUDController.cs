@@ -26,7 +26,8 @@ public class LevelHUDController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI yellowRunesLeftText;
 
     [SerializeField] private float propertyUpdateAnimationLength = 0.3f;
-    [SerializeField] private float propertyUpdateMaxScale = 3f;
+    [SerializeField] private float runesLeftUpdateMaxScale = 3f;
+    [SerializeField] private float propertyUpdateMaxScale = 2f;
 
     private bool isPlaying = true;
     private float timeRemainingFloat = 0f;
@@ -107,7 +108,7 @@ public class LevelHUDController : MonoBehaviour
     public void SetScoreText(int score)
     {
         scoreText.SetText($"Score: {score}");
-        StartCoroutine(AnimatePropertyUpdate(scoreText.transform));
+        StartCoroutine(AnimatePropertyUpdate(scoreText.transform, propertyUpdateMaxScale));
     }
 
     public void SetNumberOfRunesLeftText(RuneColor color, int runesLeft)
@@ -123,20 +124,20 @@ public class LevelHUDController : MonoBehaviour
         };
         Assert.IsNotNull(runesLeftText);
         runesLeftText.SetText($"{runesLeft}");
-        StartCoroutine(AnimatePropertyUpdate(runesLeftText.transform));
+        StartCoroutine(AnimatePropertyUpdate(runesLeftText.transform, runesLeftUpdateMaxScale));
     }
 
     private void SetTimeRemainingText()
     {
         timeRemainingText.SetText($"Time left: {timeRemaining}");
         if (timeRemaining <= 10)
-            StartCoroutine(AnimatePropertyUpdate(timeRemainingText.transform));
+            StartCoroutine(AnimatePropertyUpdate(timeRemainingText.transform, propertyUpdateMaxScale));
     }
 
     public void SetMovesLeftText(int movesLeft)
     {
         movesLeftText.SetText($"Moves left: {movesLeft}");
-        StartCoroutine(AnimatePropertyUpdate(movesLeftText.transform));
+        StartCoroutine(AnimatePropertyUpdate(movesLeftText.transform, propertyUpdateMaxScale));
     }
 
     public void OpenGameOverHUD(GameOverCause cause)
@@ -161,16 +162,16 @@ public class LevelHUDController : MonoBehaviour
         controller.levelName = levelName;
     }
 
-    private IEnumerator AnimatePropertyUpdate(Transform property)
+    private IEnumerator AnimatePropertyUpdate(Transform property, float maxScale)
     {
-        property.localScale = new Vector3(propertyUpdateMaxScale, propertyUpdateMaxScale, 1f);
+        property.localScale = new Vector3(maxScale, maxScale, 1f);
 
         float elapsed = 0f;
         while (elapsed < propertyUpdateAnimationLength)
         {
             elapsed += Time.deltaTime;
             float t = elapsed / propertyUpdateAnimationLength;
-            float scale = Mathf.Lerp(propertyUpdateMaxScale, 1f, t);
+            float scale = Mathf.Lerp(maxScale, 1f, t);
             property.localScale = new Vector3(scale, scale, 1f);
             yield return null;
         }
