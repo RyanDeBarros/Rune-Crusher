@@ -16,8 +16,6 @@ public class ScoreTracker : MonoBehaviour
     [SerializeField] private int initialRedRunesLeft = 3;
     [SerializeField] private int initialYellowRunesLeft = 3;
 
-    // TODO background UI
-
     private int score;
     readonly Dictionary<RuneColor, int> runesLeft = new();
 
