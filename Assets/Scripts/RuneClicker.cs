@@ -125,13 +125,13 @@ public class RuneClicker : MonoBehaviour
         swapSFX.Play();
         yield return spawner.SwapRunes(fromCoordinates, toCoordinates);
 
-        int score = 0;
-        yield return ComputeScore(result => score = result);
+        bool matchMade = false;
+        yield return ComputeScore(success => matchMade = success);
 
-        if (score > 0)
+        if (matchMade)
         {
             paused = false;
-            UpdateScore(score);
+            UpdateScore();
         }
         else
         {
@@ -141,10 +141,10 @@ public class RuneClicker : MonoBehaviour
         }
     }
 
-    private IEnumerator ComputeScore(Action<int> scoreCallback)
+    private IEnumerator ComputeScore(Action<bool> callback)
     {
-        int score = 0;
         int cascadeLevel = 0;
+        bool matchedAny = false;
         bool matched;
 
         do
@@ -156,21 +156,20 @@ public class RuneClicker : MonoBehaviour
                 matchMadeSFX.pitch = 1f + 0.1f * cascadeLevel;
                 matchMadeSFX.Play();
                 var matchKeys = matches.Keys.ToHashSet();
-                score += scoreTracker.CalculateScore(matchKeys, cascadeLevel++);
+                matchedAny |= scoreTracker.CalculateScore(matchKeys, cascadeLevel++);
                 yield return spawner.ConsumeRunes(matchKeys, runs);
                 yield return spawner.Cascade(matches);
             }
         } while (matched);
 
-        scoreCallback.Invoke(score);
+        callback.Invoke(matchedAny);
     }
 
-    private void UpdateScore(int addScore)
+    private void UpdateScore()
     {
         if (movesLeft > 0)
         {
             // update score
-            scoreTracker.AddScore(addScore);
             if (!scoreTracker.HasRunesLeft())
                 hud.OpenLevelCompleteHUD(scoreTracker.GetScore());
         }

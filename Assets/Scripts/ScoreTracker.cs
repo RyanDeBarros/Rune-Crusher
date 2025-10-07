@@ -16,7 +16,6 @@ public class ScoreTracker : MonoBehaviour
     [SerializeField] private int initialRedRunesLeft = 3;
     [SerializeField] private int initialYellowRunesLeft = 3;
 
-    // TODO add new fonts to level complete, game over.
     // TODO fix time 10sec countdown animation.
     // TODO background UI
 
@@ -69,14 +68,16 @@ public class ScoreTracker : MonoBehaviour
         return score;
     }
 
-    public void AddScore(int score)
+    public bool CalculateScore(HashSet<Vector2Int> matches, int cascadeLevel)
     {
-        this.score += score;
-        hud.SetScoreText(this.score);
-    }
-
-    public int CalculateScore(HashSet<Vector2Int> matches, int cascadeLevel)
-    {
-        return matches.Count * GetScorePerMatch(cascadeLevel);
+        int addScore = matches.Count * GetScorePerMatch(cascadeLevel);
+        if (addScore > 0)
+        {
+            score += addScore;
+            hud.SetScoreText(score);
+            return true;
+        }
+        else
+            return false;
     }
 }
