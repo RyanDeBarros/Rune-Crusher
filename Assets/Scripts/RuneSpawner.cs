@@ -15,9 +15,9 @@ public class RuneSpawner : MonoBehaviour
 
     [Header("Animation")]
     [SerializeField] private float runeSwapAnimationDuration = 0.2f;
-    [SerializeField] private float runeConsumeAnimationDuration = 0.05f;
+    [SerializeField] private float runeConsumeAnimationDuration = 0.1f;
     [SerializeField] private float runeFallSpeed = 5f;
-    [SerializeField] private float runeSpawnAnimationDuration = 0.05f;
+    [SerializeField] private float runeSpawnAnimationDuration = 0.1f;
 
     public static readonly int numberOfRows = 8;
     public static readonly int numberOfCols = 8;
@@ -90,6 +90,15 @@ public class RuneSpawner : MonoBehaviour
             yield return AnimateNewRuneSpawn(coordinates);
         else
             yield return FillGrid();
+
+
+        // TODO remove
+        runes[0, 0].Color = RuneColor.Red;
+        runes[0, 1].Color = RuneColor.Red;
+        runes[0, 2].Color = RuneColor.Yellow;
+        runes[1, 0].Color = RuneColor.Yellow;
+        runes[1, 1].Color = RuneColor.Yellow;
+        runes[1, 2].Color = RuneColor.Red;
     }
 
     private Rune NewRune(int x, int y, RuneColor color)

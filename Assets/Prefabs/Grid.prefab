@@ -86,9 +86,9 @@ MonoBehaviour:
   runePrefab: {fileID: 1264531162286799205, guid: 39bd0e3e9a122b84ca2330dc7e8f9b33, type: 3}
   cascadeRefillStrategy: 0
   runeSwapAnimationDuration: 0.2
-  runeConsumeAnimationDuration: 0.05
+  runeConsumeAnimationDuration: 0.1
   runeFallSpeed: 5
-  runeSpawnAnimationDuration: 0.05
+  runeSpawnAnimationDuration: 0.1
 --- !u!114 &7776851194042036441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,6 +127,7 @@ MonoBehaviour:
   swapSFXClip: {fileID: 8300000, guid: 33faf289db824b140b0c80f5f604b764, type: 3}
   swapCancelSFXClip: {fileID: 8300000, guid: bd77ac1e2c9a69d43bbb68831a021fd7, type: 3}
   matchMadeSFXClip: {fileID: 8300000, guid: a3609bc143abfb844a3acfbf641bdb25, type: 3}
+  tablets: []
 --- !u!1 &3331183075162044682
 GameObject:
   m_ObjectHideFlags: 0

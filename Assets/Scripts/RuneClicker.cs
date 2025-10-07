@@ -107,6 +107,11 @@ public class RuneClicker : MonoBehaviour
         }
     }
 
+    public bool IsPaused()
+    {
+        return paused;
+    }
+
     private void SwapRunes(int byX, int byY)
     {
         Vector2Int? coordinates = spawner.GetCoordinatesUnderPosition(clickPosition);

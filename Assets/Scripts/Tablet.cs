@@ -62,7 +62,7 @@ public class Tablet : MonoBehaviour
 
     private void Execute()
     {
-        if (button.interactable)
+        if (button.interactable && !clicker.IsPaused())
         {
             button.interactable = false;
             clicker.ConsumeRunes(action.ToConsume());
