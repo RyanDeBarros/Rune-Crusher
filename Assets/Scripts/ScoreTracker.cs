@@ -16,7 +16,6 @@ public class ScoreTracker : MonoBehaviour
     [SerializeField] private int initialRedRunesLeft = 3;
     [SerializeField] private int initialYellowRunesLeft = 3;
 
-    // TODO fix time 10sec countdown animation.
     // TODO background UI
 
     private int score;

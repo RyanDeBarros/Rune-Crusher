@@ -84,8 +84,12 @@ public class LevelHUDController : MonoBehaviour
                 return;
             }
 
-            timeRemaining = (int)timeRemainingFloat;
-            SetTimeRemainingText();
+            int newTime = (int)timeRemainingFloat;
+            if (newTime != timeRemaining)
+            {
+                timeRemaining = newTime;
+                SetTimeRemainingText();
+            }
         }
     }
 
@@ -200,7 +204,7 @@ public class LevelHUDController : MonoBehaviour
         while (elapsed < propertyUpdateAnimationLength)
         {
             elapsed += Time.deltaTime;
-            float t = elapsed / propertyUpdateAnimationLength;
+            float t = Mathf.Clamp01(elapsed / propertyUpdateAnimationLength);
             float scale = Mathf.Lerp(maxScale, 1f, t);
             property.localScale = new Vector3(scale, scale, 1f);
             yield return null;
