@@ -203,21 +203,12 @@ public class RuneSpawner : MonoBehaviour
         return runes[x, y].GetColor();
     }
 
-    public void ComputeRuneMatches(out Dictionary<Vector2Int, RuneMatchType> matches, out Dictionary<RuneColor, int> runs, out List<(List<Vector2Int>, RuneColor)> groups)
+    public void ComputeRuneMatches(out Dictionary<Vector2Int, RuneMatchType> matches, out List<(List<Vector2Int>, RuneColor)> groups)
     {
         Assert.IsTrue(IsEveryCellFilled());
 
         matches = new();
-        runs = new(); // TODO no need for runs once done implementing groups
         groups = new();
-
-        static void IncrementRun(Dictionary<RuneColor, int> runs, RuneColor color)
-        {
-            if (runs.ContainsKey(color))
-                ++runs[color];
-            else
-                runs[color] = 1;
-        }
 
         static void FillHorizontalMatches(Dictionary<Vector2Int, RuneMatchType> matches, int x, int y, int runLength)
         {
@@ -249,7 +240,6 @@ public class RuneSpawner : MonoBehaviour
                 {
                     if (group.Count >= rowRunLength)
                     {
-                        IncrementRun(runs, currentColor);
                         FillHorizontalMatches(matches, x - 1, y, group.Count);
                         groups.Add(new(group, currentColor));
                     }
@@ -261,7 +251,6 @@ public class RuneSpawner : MonoBehaviour
 
             if (group.Count >= rowRunLength)
             {
-                IncrementRun(runs, currentColor);
                 FillHorizontalMatches(matches, x, y, group.Count);
                 groups.Add(new(group, currentColor));
             }
@@ -285,7 +274,6 @@ public class RuneSpawner : MonoBehaviour
                 {
                     if (group.Count >= colRunLength)
                     {
-                        IncrementRun(runs, currentColor);
                         FillVerticalMatches(matches, x, y - 1, group.Count);
                         groups.Add(new(group, currentColor));
                     }
@@ -297,7 +285,6 @@ public class RuneSpawner : MonoBehaviour
 
             if (group.Count >= colRunLength)
             {
-                IncrementRun(runs, currentColor);
                 FillVerticalMatches(matches, x, y, group.Count);
                 groups.Add(new(group, currentColor));
             }
@@ -363,10 +350,10 @@ public class RuneSpawner : MonoBehaviour
         return false;
     }
 
-    public IEnumerator ConsumeRunes(HashSet<Vector2Int> matches, Dictionary<RuneColor, int> runs)
+    public IEnumerator ConsumeRunes(HashSet<Vector2Int> matches, List<(List<Vector2Int> group, RuneColor color)> groups)
     {
-        foreach ((RuneColor color, int number) in runs)
-            scoreTracker.MakeMatches(color, number);
+        groups.GroupBy(g => g.color).ToDictionary(g => g.Key, g => g.Count())
+            .ToList().ForEach(g => scoreTracker.MakeMatches(g.Key, g.Value));
 
         yield return AnimateConsumingRunes(matches);
 

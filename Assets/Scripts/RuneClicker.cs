@@ -175,16 +175,16 @@ public class RuneClicker : MonoBehaviour
 
         do
         {
-            spawner.ComputeRuneMatches(out var matches, out var runs, out var groups);
+            spawner.ComputeRuneMatches(out var matches, out var groups);
             matched = matches.Count > 0;
             if (matched)
             {
                 matchMadeSFX.pitch = 1f + 0.1f * cascadeLevel;
                 matchMadeSFX.Play();
-                HashSet<Vector2Int> matchKeys = matches.Keys.ToHashSet();
-                matchedAny |= scoreTracker.CalculateScore(matchKeys, cascadeLevel++);
+                HashSet<Vector2Int> toConsume = matches.Keys.ToHashSet();
+                matchedAny |= scoreTracker.CalculateScore(toConsume, cascadeLevel++);
                 CheckForTabletActivation(groups);
-                yield return spawner.ConsumeRunes(matchKeys, runs);
+                yield return spawner.ConsumeRunes(toConsume, groups);
                 yield return spawner.Cascade(matches);
             }
         } while (matched);
