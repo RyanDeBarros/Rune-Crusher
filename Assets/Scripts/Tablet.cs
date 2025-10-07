@@ -33,7 +33,7 @@ public class Tablet : MonoBehaviour
 
     public void Enable()
     {
-        button.interactable = true;
+        button.interactable = true; // TODO animate
     }
 
     private void Execute()
