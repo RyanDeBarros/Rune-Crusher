@@ -19,8 +19,8 @@ public class RuneSpawner : MonoBehaviour
     [SerializeField] private float runeFallSpeed = 5f;
     [SerializeField] private float runeSpawnAnimationDuration = 0.05f;
 
-    private static readonly int numberOfRows = 8;
-    private static readonly int numberOfCols = 8;
+    public static readonly int numberOfRows = 8;
+    public static readonly int numberOfCols = 8;
     private readonly Rune[,] runes = new Rune[numberOfRows, numberOfCols];
 
     private Vector2 firstCellPosition;
@@ -203,12 +203,13 @@ public class RuneSpawner : MonoBehaviour
         return runes[x, y].GetColor();
     }
 
-    public void ComputeRuneMatches(out Dictionary<Vector2Int, RuneMatchType> matches, out Dictionary<RuneColor, int> runs)
+    public void ComputeRuneMatches(out Dictionary<Vector2Int, RuneMatchType> matches, out Dictionary<RuneColor, int> runs, out List<(List<Vector2Int>, RuneColor)> groups)
     {
         Assert.IsTrue(IsEveryCellFilled());
 
         matches = new();
-        runs = new();
+        runs = new(); // TODO no need for runs once done implementing groups
+        groups = new();
 
         static void IncrementRun(Dictionary<RuneColor, int> runs, RuneColor color)
         {
@@ -233,60 +234,72 @@ public class RuneSpawner : MonoBehaviour
         // Check for horizontal runs
         for (int y = 0; y < numberOfRows; ++y)
         {
-            int runLength = 1;
             int x = 0;
+
+            List<Vector2Int> group = new()
+            {
+                new(x, y)
+            };
+
             RuneColor currentColor = ColorAt(x++, y);
             while (x < numberOfCols)
             {
                 RuneColor stepColor = ColorAt(x++, y);
-                if (stepColor == currentColor)
-                    ++runLength;
-                else
+                if (stepColor != currentColor)
                 {
-                    if (runLength >= rowRunLength)
+                    if (group.Count >= rowRunLength)
                     {
                         IncrementRun(runs, currentColor);
-                        FillHorizontalMatches(matches, x - 1, y, runLength);
+                        FillHorizontalMatches(matches, x - 1, y, group.Count);
+                        groups.Add(new(group, currentColor));
                     }
-                    runLength = 1;
+                    group.Clear();
                     currentColor = stepColor;
                 }
+                group.Add(new(x - 1, y));
             }
 
-            if (runLength >= rowRunLength)
+            if (group.Count >= rowRunLength)
             {
                 IncrementRun(runs, currentColor);
-                FillHorizontalMatches(matches, x, y, runLength);
+                FillHorizontalMatches(matches, x, y, group.Count);
+                groups.Add(new(group, currentColor));
             }
         }
 
         // Check for vertical runs - if cell is part of horizontal and vertical run, consider it as being vertical
         for (int x = 0; x < numberOfCols; ++x)
         {
-            int runLength = 1;
             int y = 0;
+
+            List<Vector2Int> group = new()
+            {
+                new(x, y)
+            };
+
             RuneColor currentColor = ColorAt(x, y++);
             while (y < numberOfRows)
             {
                 RuneColor stepColor = ColorAt(x, y++);
-                if (stepColor == currentColor)
-                    ++runLength;
-                else
+                if (stepColor != currentColor)
                 {
-                    if (runLength >= colRunLength)
+                    if (group.Count >= colRunLength)
                     {
                         IncrementRun(runs, currentColor);
-                        FillVerticalMatches(matches, x, y - 1, runLength);
+                        FillVerticalMatches(matches, x, y - 1, group.Count);
+                        groups.Add(new(group, currentColor));
                     }
-                    runLength = 1;
+                    group.Clear();
                     currentColor = stepColor;
                 }
+                group.Add(new(x, y - 1));
             }
 
-            if (runLength >= colRunLength)
+            if (group.Count >= colRunLength)
             {
                 IncrementRun(runs, currentColor);
-                FillVerticalMatches(matches, x, y, runLength);
+                FillVerticalMatches(matches, x, y, group.Count);
+                groups.Add(new(group, currentColor));
             }
         }
     }
@@ -365,6 +378,18 @@ public class RuneSpawner : MonoBehaviour
         }
     }
 
+    public IEnumerator ConsumeRunes(HashSet<Vector2Int> matches)
+    {
+        yield return AnimateConsumingRunes(matches);
+
+        foreach (Vector2Int match in matches)
+        {
+            Rune rune = runes[match.x, match.y];
+            rune.Color = null;
+            rune.transform.localScale = Vector3.one;
+        }
+    }
+
     private IEnumerator AnimateConsumingRunes(HashSet<Vector2Int> matches)
     {
         float elapsed = 0f;
@@ -384,7 +409,7 @@ public class RuneSpawner : MonoBehaviour
     public IEnumerator Cascade(Dictionary<Vector2Int, RuneMatchType> matches)
     {
         Assert.IsFalse(IsEveryCellFilled());
-        Dictionary<Vector2Int, int> fallTranslations = ComputeFallTranslations(matches, out Dictionary<Vector2Int, Vector2Int> matchToSpawnCoordinates);
+        Dictionary<Vector2Int, int> fallTranslations = ComputeFallTranslations(matches.Keys.ToHashSet(), out Dictionary<Vector2Int, Vector2Int> matchToSpawnCoordinates);
         if (fallTranslations.Count > 0)
             yield return AnimateCascade(fallTranslations);
         ResetCascadedRunes(fallTranslations);
@@ -397,7 +422,23 @@ public class RuneSpawner : MonoBehaviour
         }
     }
 
-    private Dictionary<Vector2Int, int> ComputeFallTranslations(Dictionary<Vector2Int, RuneMatchType> matches, out Dictionary<Vector2Int, Vector2Int> matchToSpawnCoordinates)
+    public IEnumerator Cascade(HashSet<Vector2Int> matches)
+    {
+        Assert.IsFalse(IsEveryCellFilled());
+        Dictionary<Vector2Int, int> fallTranslations = ComputeFallTranslations(matches.ToHashSet(), out Dictionary<Vector2Int, Vector2Int> matchToSpawnCoordinates);
+        if (fallTranslations.Count > 0)
+            yield return AnimateCascade(fallTranslations);
+        ResetCascadedRunes(fallTranslations);
+        GenerateNewRunes(matches, matchToSpawnCoordinates);
+        yield return AnimateNewRuneSpawn(matchToSpawnCoordinates.Values.ToList());
+        if (!AreMovesPossible())
+        {
+            yield return AnimateFullGridDespawn();
+            yield return FillGrid();
+        }
+    }
+
+    private Dictionary<Vector2Int, int> ComputeFallTranslations(HashSet<Vector2Int> matches, out Dictionary<Vector2Int, Vector2Int> matchToSpawnCoordinates)
     {
         Dictionary<Vector2Int, int> fallTranslations = new();
         matchToSpawnCoordinates = new();
@@ -416,7 +457,7 @@ public class RuneSpawner : MonoBehaviour
             }
 
             if (fallOffset > 0)
-                foreach (Vector2Int match in matches.Keys.Where(match => match.x == x).OrderBy(match => match.y))
+                foreach (Vector2Int match in matches.Where(match => match.x == x).OrderBy(match => match.y))
                     matchToSpawnCoordinates[match] = new(match.x, numberOfRows - fallOffset--);
         }
         return fallTranslations;
@@ -459,6 +500,21 @@ public class RuneSpawner : MonoBehaviour
 
         foreach ((Vector2Int coords, int fallOffset) in fallTranslations)
             runes[coords.x, coords.y - fallOffset].Color = preMoveColors[coords];
+    }
+
+    private void GenerateNewRunes(HashSet<Vector2Int> matches, Dictionary<Vector2Int, Vector2Int> matchToSpawnCoordinates)
+    {
+        Dictionary<int, int> minYPerColumn = new();
+        foreach (Vector2Int coords in matches)
+            if (!minYPerColumn.ContainsKey(coords.x) || coords.y < minYPerColumn[coords.x])
+                minYPerColumn[coords.x] = coords.y;
+
+        foreach (Vector2Int match in matches)
+        {
+            Vector2Int spawnCoordinates = matchToSpawnCoordinates[match];
+            runes[spawnCoordinates.x, spawnCoordinates.y].Color = cascadeRefiller.GenerateColor(GetRuneNeighbourhood(spawnCoordinates.x, spawnCoordinates.y),
+                RuneMatchType.Vertical, match.y == minYPerColumn[match.x]); // just use vertical for target actions
+        }
     }
 
     private void GenerateNewRunes(Dictionary<Vector2Int, RuneMatchType> matches, Dictionary<Vector2Int, Vector2Int> matchToSpawnCoordinates)

@@ -13,6 +13,7 @@ public class RuneClicker : MonoBehaviour
     [SerializeField] private AudioClip swapSFXClip;
     [SerializeField] private AudioClip swapCancelSFXClip;
     [SerializeField] private AudioClip matchMadeSFXClip;
+    [SerializeField] private List<Tablet> tablets;
 
     private RuneSpawner spawner;
     private ScoreTracker scoreTracker;
@@ -126,7 +127,7 @@ public class RuneClicker : MonoBehaviour
         yield return spawner.SwapRunes(fromCoordinates, toCoordinates);
 
         bool matchMade = false;
-        yield return ComputeScore(success => matchMade = success);
+        yield return ComputeScore(success => matchMade = success, cascadeStartingLevel: 0);
 
         if (matchMade)
         {
@@ -141,28 +142,54 @@ public class RuneClicker : MonoBehaviour
         }
     }
 
-    private IEnumerator ComputeScore(Action<bool> callback)
+    public void ConsumeRunes(HashSet<Vector2Int> toConsume)
     {
-        int cascadeLevel = 0;
+        StartCoroutine(ConsumeAllRunesRoutine(toConsume));
+    }
+
+    private IEnumerator ConsumeAllRunesRoutine(HashSet<Vector2Int> toConsume)
+    {
+        paused = true;
+        --movesLeft;
+        hud.SetMovesLeftText(movesLeft);
+        
+        // TODO different SFX for tablet action
+        swapSFX.Play();
+        matchMadeSFX.pitch = 1f;
+        matchMadeSFX.Play();
+
+        Assert.IsTrue(scoreTracker.CalculateScore(toConsume, 0));
+        yield return spawner.ConsumeRunes(toConsume);
+        yield return spawner.Cascade(toConsume);
+        yield return ComputeScore(null, cascadeStartingLevel: 1);
+
+        paused = false;
+        UpdateScore();
+    }
+
+    private IEnumerator ComputeScore(Action<bool> callback, int cascadeStartingLevel)
+    {
+        int cascadeLevel = cascadeStartingLevel;
         bool matchedAny = false;
         bool matched;
 
         do
         {
-            spawner.ComputeRuneMatches(out var matches, out var runs);
+            spawner.ComputeRuneMatches(out var matches, out var runs, out var groups);
             matched = matches.Count > 0;
             if (matched)
             {
                 matchMadeSFX.pitch = 1f + 0.1f * cascadeLevel;
                 matchMadeSFX.Play();
-                var matchKeys = matches.Keys.ToHashSet();
+                HashSet<Vector2Int> matchKeys = matches.Keys.ToHashSet();
                 matchedAny |= scoreTracker.CalculateScore(matchKeys, cascadeLevel++);
+                CheckForTabletActivation(groups);
                 yield return spawner.ConsumeRunes(matchKeys, runs);
                 yield return spawner.Cascade(matches);
             }
         } while (matched);
 
-        callback.Invoke(matchedAny);
+        callback?.Invoke(matchedAny);
     }
 
     private void UpdateScore()
@@ -181,6 +208,11 @@ public class RuneClicker : MonoBehaviour
             else
                 hud.OpenLevelCompleteHUD(scoreTracker.GetScore());
         }
+    }
+
+    private void CheckForTabletActivation(List<(List<Vector2Int>, RuneColor)> groups)
+    {
+        tablets.ForEach(tablet => { if (tablet.CanEnable(groups)) tablet.Enable(); });
     }
 
     public void OnPause()
