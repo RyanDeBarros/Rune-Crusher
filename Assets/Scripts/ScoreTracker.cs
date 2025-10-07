@@ -16,6 +16,8 @@ public class ScoreTracker : MonoBehaviour
     [SerializeField] private int initialRedRunesLeft = 3;
     [SerializeField] private int initialYellowRunesLeft = 3;
 
+    // TODO add new fonts to level complete, game over.
+    // TODO fix time 10sec countdown animation.
     // TODO constant background music. Lower volume when paused/game over/level complete.
     // TODO background UI
 
