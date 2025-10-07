@@ -35,7 +35,7 @@ public class Rune : MonoBehaviour
     {
         if (color.HasValue)
         {
-            this._color = color.Value;
+            _color = color.Value;
             spriteRenderer.sprite = color.Value switch
             {
                 RuneColor.Blue => blueSprite,
@@ -48,7 +48,7 @@ public class Rune : MonoBehaviour
         }
         else
         {
-            this._color = null;
+            _color = null;
             spriteRenderer.sprite = null;
         }
     }
