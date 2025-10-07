@@ -25,9 +25,14 @@ public class LevelHUDController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI redRunesLeftText;
     [SerializeField] private TextMeshProUGUI yellowRunesLeftText;
 
+    [Header("Animation")]
     [SerializeField] private float propertyUpdateAnimationLength = 0.3f;
     [SerializeField] private float runesLeftUpdateMaxScale = 3f;
     [SerializeField] private float propertyUpdateMaxScale = 2f;
+
+    [Header("Audio")]
+    [SerializeField] private AudioClip levelCompleteSFX;
+    [SerializeField] private AudioClip gameOverSFX;
 
     private bool isPlaying = true;
     private float timeRemainingFloat = 0f;
@@ -56,6 +61,9 @@ public class LevelHUDController : MonoBehaviour
         levelNameText.SetText(levelName);
 
         Assert.IsNotNull(clicker);
+
+        Assert.IsNotNull(levelCompleteSFX);
+        Assert.IsNotNull(gameOverSFX);
     }
 
     private void Start()
@@ -144,22 +152,38 @@ public class LevelHUDController : MonoBehaviour
     {
         isPlaying = false;
         clicker.OnPause();
+
         GameObject hud = Instantiate(gameOverHUDPrefab, transform);
         GameOverHUDController controller = hud.GetComponent<GameOverHUDController>();
         Assert.IsNotNull(controller);
         controller.levelName = levelName;
         controller.cause = cause;
+
+        PlayClip(gameOverSFX);
     }
 
     public void OpenLevelCompleteHUD(int score)
     {
         isPlaying = false;
         clicker.OnPause();
+
         GameObject hud = Instantiate(levelCompleteHUDPrefab, transform);
         LevelCompleteHUDController controller = hud.GetComponent<LevelCompleteHUDController>();
         Assert.IsNotNull(controller);
         controller.SetScore(score);
         controller.levelName = levelName;
+
+        PlayClip(levelCompleteSFX);
+    }
+
+    private void PlayClip(AudioClip clip)
+    {
+        GameObject sfxObject = new("LevelOverSFX");
+        DontDestroyOnLoad(sfxObject);
+        AudioSource source = sfxObject.AddComponent<AudioSource>();
+        source.clip = clip;
+        source.Play();
+        Destroy(sfxObject, clip.length);
     }
 
     private IEnumerator AnimatePropertyUpdate(Transform property, float maxScale)

@@ -16,7 +16,6 @@ public class ScoreTracker : MonoBehaviour
     [SerializeField] private int initialRedRunesLeft = 3;
     [SerializeField] private int initialYellowRunesLeft = 3;
 
-    // TODO SFX for winning, game over.
     // TODO constant background music. Lower volume when paused/game over/level complete.
     // TODO background UI
 

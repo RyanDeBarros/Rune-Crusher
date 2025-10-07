@@ -1218,6 +1218,8 @@ MonoBehaviour:
   propertyUpdateAnimationLength: 0.3
   runesLeftUpdateMaxScale: 3
   propertyUpdateMaxScale: 2
+  levelCompleteSFX: {fileID: 8300000, guid: bba064ff55d74514d9c20555cadf4718, type: 3}
+  gameOverSFX: {fileID: 8300000, guid: f3624a8295845154dbc912b4e53d2ae4, type: 3}
 --- !u!1 &5906803257180570250
 GameObject:
   m_ObjectHideFlags: 0
