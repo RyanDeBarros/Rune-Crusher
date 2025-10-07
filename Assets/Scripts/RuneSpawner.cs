@@ -241,7 +241,7 @@ public class RuneSpawner : MonoBehaviour
                     if (group.Count >= rowRunLength)
                     {
                         FillHorizontalMatches(matches, x - 1, y, group.Count);
-                        groups.Add(new(group, currentColor));
+                        groups.Add(new(new(group), currentColor));
                     }
                     group.Clear();
                     currentColor = stepColor;
@@ -252,7 +252,7 @@ public class RuneSpawner : MonoBehaviour
             if (group.Count >= rowRunLength)
             {
                 FillHorizontalMatches(matches, x, y, group.Count);
-                groups.Add(new(group, currentColor));
+                groups.Add(new(new(group), currentColor));
             }
         }
 
@@ -275,7 +275,7 @@ public class RuneSpawner : MonoBehaviour
                     if (group.Count >= colRunLength)
                     {
                         FillVerticalMatches(matches, x, y - 1, group.Count);
-                        groups.Add(new(group, currentColor));
+                        groups.Add(new(new(group), currentColor));
                     }
                     group.Clear();
                     currentColor = stepColor;
@@ -286,7 +286,7 @@ public class RuneSpawner : MonoBehaviour
             if (group.Count >= colRunLength)
             {
                 FillVerticalMatches(matches, x, y, group.Count);
-                groups.Add(new(group, currentColor));
+                groups.Add(new(new(group), currentColor));
             }
         }
     }

@@ -1,12 +1,29 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TabletActionL : MonoBehaviour, ITabletAction
 {
-    public bool CanEnable(List<(List<Vector2Int>, RuneColor)> groups)
+    public bool CanEnable(List<(List<Vector2Int> group, RuneColor color)> groups)
     {
-        // TODO
+        foreach ((List<Vector2Int> group, RuneColor color) in groups)
+        {
+            for (int i = 0; i < group.Count; ++i)
+            {
+                if (i + 2 < group.Count || i - 2 >= 0) // Can be a corner tile
+                {
+                    Vector2Int corner = group[i];
+                    var potential = groups.Where(g => { return g.group != group && g.color == color && g.group.Contains(corner); });
+                    if (potential.Any())
+                    {
+                        List<Vector2Int> orthogonal = potential.First().group;
+                        int j = orthogonal.IndexOf(corner);
+                        if (j + 2 < orthogonal.Count || j - 2 >= 0) // Can be a corner tile
+                            return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 

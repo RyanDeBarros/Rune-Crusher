@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TabletActionQuad : MonoBehaviour, ITabletAction
 {
-    public bool CanEnable(List<(List<Vector2Int>, RuneColor)> groups)
+    public bool CanEnable(List<(List<Vector2Int>, RuneColor)> groups) // TODO test
     {
         // TODO
         return false;
