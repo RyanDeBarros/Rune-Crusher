@@ -94,6 +94,7 @@ public class LevelHUDController : MonoBehaviour
         pauseCanvas.SetActive(true);
         isPlaying = false;
         clicker.OnPause();
+        BKGMusic.Instance.PlayAtDimmedVolume();
     }
 
     public void OnResumeButtonClicked()
@@ -101,16 +102,19 @@ public class LevelHUDController : MonoBehaviour
         pauseCanvas.SetActive(false);
         isPlaying = true;
         clicker.OnResume();
+        BKGMusic.Instance.PlayAtFullVolume();
     }
 
     public void OnRestartLevelClicked()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        BKGMusic.Instance.PlayAtFullVolume();
     }
 
     public void OnQuitButtonClicked()
     {
         SceneManager.LoadScene((int)SceneList.MainMenu);
+        BKGMusic.Instance.PlayAtFullVolume();
     }
 
     public void SetScoreText(int score)
@@ -159,6 +163,7 @@ public class LevelHUDController : MonoBehaviour
         controller.levelName = levelName;
         controller.cause = cause;
 
+        BKGMusic.Instance.PlayAtDimmedVolume();
         PlayClip(gameOverSFX);
     }
 
@@ -173,6 +178,7 @@ public class LevelHUDController : MonoBehaviour
         controller.SetScore(score);
         controller.levelName = levelName;
 
+        BKGMusic.Instance.PlayAtDimmedVolume();
         PlayClip(levelCompleteSFX);
     }
 

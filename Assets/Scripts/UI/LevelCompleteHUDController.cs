@@ -45,5 +45,6 @@ public class LevelCompleteHUDController : MonoBehaviour
     public void OnContinueButtonClicked()
     {
         SceneManager.LoadScene((int)SceneList.MainMenu);
+        BKGMusic.Instance.PlayAtFullVolume();
     }
 }

@@ -36,10 +36,12 @@ public class GameOverHUDController : MonoBehaviour
     public void OnRetryButtonClicked()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        BKGMusic.Instance.PlayAtFullVolume();
     }
 
     public void OnMainMenuButtonClicked()
     {
         SceneManager.LoadScene((int)SceneList.MainMenu);
+        BKGMusic.Instance.PlayAtFullVolume();
     }
 }
