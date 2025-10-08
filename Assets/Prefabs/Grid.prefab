@@ -104,11 +104,11 @@ MonoBehaviour:
   hud: {fileID: 0}
   scorePerMatch: 10
   cascadeMultiplier: 2
-  initialBlueRunesLeft: 5
-  initialGreenRunesLeft: 5
-  initialPurpleRunesLeft: 5
-  initialRedRunesLeft: 5
-  initialYellowRunesLeft: 5
+  initialBlueRunesLeft: 8
+  initialGreenRunesLeft: 8
+  initialPurpleRunesLeft: 8
+  initialRedRunesLeft: 8
+  initialYellowRunesLeft: 8
 --- !u!114 &7465839152580280596
 MonoBehaviour:
   m_ObjectHideFlags: 0

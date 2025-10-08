@@ -25,13 +25,10 @@ public class TabletActionFive : MonoBehaviour, ITabletAction
             }
         }
 
-        HashSet<Vector2Int> toConsume = new();
         (HashSet<Vector2Int> line1, RuneMatchType matchType1, int pos1) = Line();
-        toConsume.UnionWith(line1);
         (HashSet<Vector2Int> line2, RuneMatchType matchType2, int pos2) = Line();
         while (matchType1 == matchType2 && pos1 == pos2)
             (line2, matchType2, pos2) = Line();
-        toConsume.UnionWith(line2);
-        return toConsume;
+        return line1.Union(line2).ToHashSet();
     }
 }
