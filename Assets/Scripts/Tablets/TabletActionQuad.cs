@@ -1,10 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class TabletActionQuad : MonoBehaviour, ITabletAction
 {
+    private readonly int quadClearW = 4;
+    private readonly int quadClearH = 4;
+
     public bool CanEnable(List<(List<Vector2Int> group, RuneColor color)> groups)
     {
         static RuneMatchType MatchTypeOf(List<Vector2Int> group)
@@ -14,8 +16,8 @@ public class TabletActionQuad : MonoBehaviour, ITabletAction
 
         foreach ((List<Vector2Int> group, RuneColor color) in groups)
         {
-            Func<Vector2Int, int> coord;
-            Func<Vector2Int, int> perpCoord;
+            System.Func<Vector2Int, int> coord;
+            System.Func<Vector2Int, int> perpCoord;
             RuneMatchType matchType = MatchTypeOf(group);
             switch (matchType)
             {
@@ -32,7 +34,7 @@ public class TabletActionQuad : MonoBehaviour, ITabletAction
             }
 
             var potential = groups.Where(g => { return g.group != group && MatchTypeOf(g.group) == matchType
-                && Math.Abs(perpCoord(g.group[0]) - perpCoord(group[0])) == 1; });
+                && System.Math.Abs(perpCoord(g.group[0]) - perpCoord(group[0])) == 1; });
             if (potential.Any())
             {
                 int minX = group.Min(coord);
@@ -53,7 +55,8 @@ public class TabletActionQuad : MonoBehaviour, ITabletAction
 
     public HashSet<Vector2Int> ToConsume()
     {
-        // TODO
-        return new();
+        int x = Random.Range(0, System.Math.Max(RuneSpawner.numberOfCols - quadClearW, 0));
+        int y = Random.Range(0, System.Math.Max(RuneSpawner.numberOfRows - quadClearH, 0));
+        return Enumerable.Range(0, quadClearW).SelectMany(i => Enumerable.Range(0, quadClearH).Select(j => new Vector2Int(x + i, y + j))).ToHashSet();
     }
 }

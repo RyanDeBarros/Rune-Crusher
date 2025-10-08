@@ -29,7 +29,7 @@ public class TabletActionL : MonoBehaviour, ITabletAction
 
     public HashSet<Vector2Int> ToConsume()
     {
-        // TODO
+        // TODO 2 diagonals
         return new();
     }
 }

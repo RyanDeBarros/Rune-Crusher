@@ -10,11 +10,11 @@ public class ScoreTracker : MonoBehaviour
     [SerializeField] private float cascadeMultiplier = 2f;
 
     [Header("Initial runes left")]
-    [SerializeField] private int initialBlueRunesLeft = 3;
-    [SerializeField] private int initialGreenRunesLeft = 3;
-    [SerializeField] private int initialPurpleRunesLeft = 3;
-    [SerializeField] private int initialRedRunesLeft = 3;
-    [SerializeField] private int initialYellowRunesLeft = 3;
+    [SerializeField] private int initialBlueRunesLeft = 5;
+    [SerializeField] private int initialGreenRunesLeft = 5;
+    [SerializeField] private int initialPurpleRunesLeft = 5;
+    [SerializeField] private int initialRedRunesLeft = 5;
+    [SerializeField] private int initialYellowRunesLeft = 5;
 
     private int score;
     readonly Dictionary<RuneColor, int> runesLeft = new();

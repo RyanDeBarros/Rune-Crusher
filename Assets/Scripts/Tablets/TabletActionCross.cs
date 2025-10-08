@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class TabletActionCross : MonoBehaviour, ITabletAction
 {
+    private readonly int crossClearWidth = 5;
+
     public bool CanEnable(List<(List<Vector2Int> group, RuneColor color)> groups)
     {
         foreach ((List<Vector2Int> group, RuneColor color) in groups)
@@ -27,7 +29,15 @@ public class TabletActionCross : MonoBehaviour, ITabletAction
 
     public HashSet<Vector2Int> ToConsume()
     {
-        // TODO
-        return new();
+        int halfWidth = crossClearWidth / 2;
+        int cx = halfWidth + Random.Range(0, System.Math.Max(RuneSpawner.numberOfCols - crossClearWidth + 1, 0));
+        int cy = halfWidth + Random.Range(0, System.Math.Max(RuneSpawner.numberOfRows - crossClearWidth + 1, 0));
+
+        return new HashSet<Vector2Int>(
+            from dx in Enumerable.Range(-halfWidth, crossClearWidth)
+            from dy in Enumerable.Range(-halfWidth, crossClearWidth)
+            where System.Math.Abs(dx) + System.Math.Abs(dy) <= halfWidth
+            select new Vector2Int(cx + dx, cy + dy)
+        );
     }
 }

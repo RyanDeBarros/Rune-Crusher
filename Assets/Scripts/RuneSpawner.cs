@@ -95,10 +95,10 @@ public class RuneSpawner : MonoBehaviour
         // TODO remove
         runes[0, 0].Color = RuneColor.Red;
         runes[0, 1].Color = RuneColor.Red;
-        runes[0, 2].Color = RuneColor.Yellow;
-        runes[1, 0].Color = RuneColor.Yellow;
-        runes[1, 1].Color = RuneColor.Yellow;
         runes[1, 2].Color = RuneColor.Red;
+        runes[2, 2].Color = RuneColor.Red;
+        runes[0, 3].Color = RuneColor.Red;
+        runes[0, 2].Color = RuneColor.Yellow;
     }
 
     private Rune NewRune(int x, int y, RuneColor color)
