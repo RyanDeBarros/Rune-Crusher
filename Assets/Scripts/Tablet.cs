@@ -49,6 +49,11 @@ public class Tablet : MonoBehaviour
         }
     }
 
+    public void Disable()
+    {
+        button.interactable = false;
+    }
+
     private IEnumerator AnimateEnable()
     {
         button.transform.localScale = new Vector3(1f, 1f, 1f);
@@ -74,6 +79,7 @@ public class Tablet : MonoBehaviour
             button.interactable = false;
             executeSFX.Play();
             clicker.ConsumeRunes(action.ToConsume());
+            clicker.DisableAllTablets();
         }
     }
 }

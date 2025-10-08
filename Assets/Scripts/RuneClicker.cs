@@ -215,6 +215,11 @@ public class RuneClicker : MonoBehaviour
         tablets.ForEach(tablet => { if (tablet.CanEnable(groups)) tablet.Enable(); });
     }
 
+    public void DisableAllTablets()
+    {
+        tablets.ForEach(tablet => tablet.Disable());
+    }
+
     public void OnPause()
     {
         paused = true;
