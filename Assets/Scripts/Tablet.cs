@@ -10,13 +10,20 @@ public class Tablet : MonoBehaviour
     [SerializeField] private RuneClicker clicker;
     [SerializeField] private float enableAnimationLength = 0.5f;
     [SerializeField] private float enableAnimationMaxScale = 1.5f;
+    [SerializeField] private AudioClip executeSFXClip;
 
     private ITabletAction action;
     private Button button;
+    private AudioSource executeSFX;
 
     private void Awake()
     {
         Assert.IsNotNull(clicker);
+
+        Assert.IsNotNull(executeSFXClip);
+        executeSFX = gameObject.AddComponent<AudioSource>();
+        executeSFX.clip = executeSFXClip;
+        executeSFX.playOnAwake = false;
 
         action = GetComponent<ITabletAction>();
         Assert.IsNotNull(action);
@@ -65,6 +72,7 @@ public class Tablet : MonoBehaviour
         if (button.interactable && !clicker.IsPaused())
         {
             button.interactable = false;
+            executeSFX.Play();
             clicker.ConsumeRunes(action.ToConsume());
         }
     }

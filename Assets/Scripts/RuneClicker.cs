@@ -157,11 +157,6 @@ public class RuneClicker : MonoBehaviour
         paused = true;
         --movesLeft;
         hud.SetMovesLeftText(movesLeft);
-        
-        // TODO different SFX for tablet action
-        swapSFX.Play();
-        matchMadeSFX.pitch = 1f;
-        matchMadeSFX.Play();
 
         Assert.IsTrue(scoreTracker.CalculateScore(toConsume, 0));
         yield return spawner.ConsumeRunes(toConsume);

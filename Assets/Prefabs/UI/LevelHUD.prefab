@@ -270,6 +270,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65ac9492b7f32434aa440f7b072431a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clicker: {fileID: 0}
+  enableAnimationLength: 0.5
+  enableAnimationMaxScale: 1.5
+  executeSFXClip: {fileID: 8300000, guid: c35666018919af946af0a5153ca56e4e, type: 3}
 --- !u!114 &4097194895386833639
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1032,6 +1036,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65ac9492b7f32434aa440f7b072431a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clicker: {fileID: 0}
+  enableAnimationLength: 0.5
+  enableAnimationMaxScale: 1.5
+  executeSFXClip: {fileID: 8300000, guid: ab10dfef67af8784fa389d70d7a2b736, type: 3}
 --- !u!114 &7425056737803979686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1925,6 +1933,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65ac9492b7f32434aa440f7b072431a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clicker: {fileID: 0}
+  enableAnimationLength: 0.5
+  enableAnimationMaxScale: 1.5
+  executeSFXClip: {fileID: 8300000, guid: 05e4950c2661c854da553f657357eb2b, type: 3}
 --- !u!114 &3456413134893827966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2207,6 +2219,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65ac9492b7f32434aa440f7b072431a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clicker: {fileID: 0}
+  enableAnimationLength: 0.5
+  enableAnimationMaxScale: 1.5
+  executeSFXClip: {fileID: 8300000, guid: 51f95f2b857369b4594bef923dca3385, type: 3}
 --- !u!114 &74228247522167245
 MonoBehaviour:
   m_ObjectHideFlags: 0
