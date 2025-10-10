@@ -132,17 +132,14 @@ public class RuneClicker : MonoBehaviour
         bool matchMade = false;
         yield return ComputeScore(success => matchMade = success, cascadeStartingLevel: 0);
 
-        if (matchMade)
-        {
-            paused = false;
-            UpdateScore();
-        }
-        else
+        if (!matchMade)
         {
             swapCancelSFX.Play();
             yield return spawner.SwapRunes(fromCoordinates, toCoordinates);
-            paused = false;
         }
+
+        paused = false;
+        UpdateScore();
     }
 
     public void ConsumeRunes(HashSet<Vector2Int> toConsume)

@@ -162,7 +162,7 @@ public class LevelHUDController : MonoBehaviour
         clicker.OnPause();
 
         GameObject hud = Instantiate(gameOverHUDPrefab, transform);
-        GameOverHUDController controller = hud.GetComponent<GameOverHUDController>();
+        GameOverHUDController controller = hud.GetComponentInChildren<GameOverHUDController>();
         Assert.IsNotNull(controller);
         controller.levelName = levelName;
         controller.cause = cause;
@@ -177,7 +177,7 @@ public class LevelHUDController : MonoBehaviour
         clicker.OnPause();
 
         GameObject hud = Instantiate(levelCompleteHUDPrefab, transform);
-        LevelCompleteHUDController controller = hud.GetComponent<LevelCompleteHUDController>();
+        LevelCompleteHUDController controller = hud.GetComponentInChildren<LevelCompleteHUDController>();
         Assert.IsNotNull(controller);
         controller.SetScore(score);
         controller.levelName = levelName;
