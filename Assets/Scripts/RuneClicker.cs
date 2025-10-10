@@ -18,7 +18,7 @@ public class RuneClicker : MonoBehaviour
     private RuneSpawner spawner;
     private ScoreTracker scoreTracker;
 
-    private bool mouseDragging = false;
+    private bool inputDragging = false;
     private Vector2 clickPosition;
     private bool paused = false;
 
@@ -55,38 +55,17 @@ public class RuneClicker : MonoBehaviour
         hud.SetMovesLeftText(movesLeft);
     }
 
-    private Vector2 GetMouseWorldPosition()
-    {
-        return Camera.main.ScreenToWorldPoint(Input.mousePosition);
-    }
-
     private void Update()
     {
         if (paused) return;
+        UpdateDraggingInput();
 
-        if (Input.GetMouseButtonDown(0))
+        if (inputDragging)
         {
-            if (!mouseDragging)
+            Vector2 direction = GetDraggingDirection();
+            if (direction.magnitude > swapMotionThreshold)
             {
-                mouseDragging = true;
-                clickPosition = GetMouseWorldPosition();
-            }
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            if (mouseDragging)
-            {
-                mouseDragging = false;
-            }
-        }
-
-        if (mouseDragging)
-        {
-            if (Vector3.Distance(GetMouseWorldPosition(), clickPosition) > swapMotionThreshold)
-            {
-                mouseDragging = false;
-                Vector2 direction = GetMouseWorldPosition() - clickPosition;
+                inputDragging = false;
                 direction.Normalize();
                 if (Mathf.Abs(direction.x) < Mathf.Abs(direction.y))
                 {
@@ -105,6 +84,25 @@ public class RuneClicker : MonoBehaviour
                 SwapRunes((int)direction.x, (int)direction.y);
             }
         }
+    }
+
+    private void UpdateDraggingInput()
+    {
+        if (PlatformSupport.IsMainPointerDown())
+        {
+            if (!inputDragging)
+            {
+                inputDragging = true;
+                clickPosition = PlatformSupport.GetMainPointerWorldPosition();
+            }
+        }
+        else
+            inputDragging = false;
+    }
+
+    private Vector2 GetDraggingDirection()
+    {
+        return PlatformSupport.GetMainPointerWorldPosition() - clickPosition;
     }
 
     public bool IsPaused()
@@ -223,12 +221,12 @@ public class RuneClicker : MonoBehaviour
     public void OnPause()
     {
         paused = true;
-        mouseDragging = false;
+        inputDragging = false;
     }
 
     public void OnResume()
     {
         paused = false;
-        mouseDragging = false;
+        inputDragging = false;
     }
 }
