@@ -1370,8 +1370,8 @@ MonoBehaviour:
   levelNameText: {fileID: 6445268506448593152}
   levelName: 
   clicker: {fileID: 0}
-  gameOverHUDPrefab: {fileID: 3075542162536031956, guid: 8cb973218e0f6b04598ad47a603cd94d, type: 3}
-  levelCompleteHUDPrefab: {fileID: 6661792651872643203, guid: 08c303f28d60b0745b89ee833f6fc8d3, type: 3}
+  gameOverHUDPrefab: {fileID: 2555665842382922743, guid: 08f7989ab8ed1c443b26486a6e105cec, type: 3}
+  levelCompleteHUDPrefab: {fileID: 820611007902494724, guid: b1329e316e437854b93927e884f8d3d1, type: 3}
   timeRemaining: 90
   blueRunesLeftText: {fileID: 4998111001104563189}
   greenRunesLeftText: {fileID: 735320358985756533}

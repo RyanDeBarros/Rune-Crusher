@@ -1,3 +1,7 @@
+
+## Special Features
+TODO: mobile support, tablet abilities, scrolling backgrounds.
+
 ## Attribution
 
 ---
