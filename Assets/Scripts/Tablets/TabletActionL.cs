@@ -63,6 +63,10 @@ public class TabletActionL : MonoBehaviour, ITabletAction
         (HashSet<Vector2Int> line2, bool positiveSlope2, int startIndex2) = Line();
         while (positiveSlope1 == positiveSlope2 && startIndex1 == startIndex2)
             (line2, positiveSlope2, startIndex2) = Line();
-        return line1.Union(line2).ToHashSet();
+        (HashSet<Vector2Int> line3, bool positiveSlope3, int startIndex3) = Line();
+        while (positiveSlope1 == positiveSlope3 && startIndex1 == startIndex3
+            || positiveSlope2 == positiveSlope3 && startIndex2 == startIndex3)
+            (line3, positiveSlope3, startIndex3) = Line();
+        return line1.Union(line2).Union(line3).ToHashSet();
     }
 }
