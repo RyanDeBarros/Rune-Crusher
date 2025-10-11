@@ -1,4 +1,4 @@
-#define OVERRIDE_PLATFORM_AS_MOBILE
+//#define OVERRIDE_PLATFORM_AS_MOBILE
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,10 +21,8 @@ public class PlatformSupport : MonoBehaviour
 
     public static bool IsMobile()
     {
-#if UNITY_EDITOR
-#if OVERRIDE_PLATFORM_AS_MOBILE
+#if UNITY_EDITOR && OVERRIDE_PLATFORM_AS_MOBILE
         return true;
-#endif
 #endif
         return Application.isMobilePlatform;
     }
@@ -37,7 +35,7 @@ public class PlatformSupport : MonoBehaviour
             return touch.HasValue && touch.Value.phase != TouchPhase.Ended && touch.Value.phase != TouchPhase.Canceled;
         }
         else
-            return Input.GetMouseButtonDown(0);
+            return Input.GetMouseButton(0);
     }
 
     public static Vector2 GetMainPointerWorldPosition()

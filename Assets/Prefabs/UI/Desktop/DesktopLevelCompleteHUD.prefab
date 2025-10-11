@@ -1030,8 +1030,8 @@ MonoBehaviour:
   starTexture: {fileID: 2800000, guid: 59dd641829928734d973099560511319, type: 3}
   noStarTexture: {fileID: 2800000, guid: e1cb6bd9304dc3241809968e3b1824ab, type: 3}
   oneStarScoreThreshold: 1500
-  twoStarsScoreThreshold: 15000
-  threeStarsScoreThreshold: 50000
+  twoStarsScoreThreshold: 5000
+  threeStarsScoreThreshold: 12000
   levelName: 
 --- !u!1 &9036640829994086925
 GameObject:

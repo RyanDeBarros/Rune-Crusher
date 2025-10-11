@@ -124,15 +124,18 @@ public class RuneClicker : MonoBehaviour
     private IEnumerator SpawnRunesRoutine(Vector2Int fromCoordinates, Vector2Int toCoordinates)
     {
         paused = true;
-        --movesLeft;
-        hud.SetMovesLeftText(movesLeft);
         swapSFX.Play();
         yield return spawner.SwapRunes(fromCoordinates, toCoordinates);
 
         bool matchMade = false;
         yield return ComputeScore(success => matchMade = success, cascadeStartingLevel: 0);
 
-        if (!matchMade)
+        if (matchMade)
+        {
+            --movesLeft;
+            hud.SetMovesLeftText(movesLeft);
+        }
+        else
         {
             swapCancelSFX.Play();
             yield return spawner.SwapRunes(fromCoordinates, toCoordinates);
