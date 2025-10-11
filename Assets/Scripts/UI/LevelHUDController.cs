@@ -33,6 +33,7 @@ public class LevelHUDController : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private AudioClip levelCompleteSFX;
     [SerializeField] private AudioClip gameOverSFX;
+    [SerializeField] private AudioClip timerLowSFX;
 
     private bool isPlaying = true;
     private float timeRemainingFloat = 0f;
@@ -64,6 +65,7 @@ public class LevelHUDController : MonoBehaviour
 
         Assert.IsNotNull(levelCompleteSFX);
         Assert.IsNotNull(gameOverSFX);
+        Assert.IsNotNull(timerLowSFX);
     }
 
     private void Start()
@@ -147,7 +149,10 @@ public class LevelHUDController : MonoBehaviour
     {
         timeRemainingText.SetText($"Time left: {timeRemaining}");
         if (timeRemaining <= 10)
+        {
+            PlayClip(timerLowSFX);
             StartCoroutine(AnimatePropertyUpdate(timeRemainingText.transform, propertyUpdateMaxScale));
+        }
     }
 
     public void SetMovesLeftText(int movesLeft)

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
@@ -10,6 +9,7 @@ public class Tablet : MonoBehaviour
     [SerializeField] private RuneClicker clicker;
     [SerializeField] private float enableAnimationLength = 0.5f;
     [SerializeField] private float enableAnimationMaxScale = 1.5f;
+    [SerializeField] private TabletUnlockSFX unlockSFX;
     [SerializeField] private AudioClip executeSFXClip;
 
     private ITabletAction action;
@@ -44,6 +44,7 @@ public class Tablet : MonoBehaviour
     {
         if (!button.interactable)
         {
+            unlockSFX.Play();
             StartCoroutine(AnimateEnable());
             button.interactable = true;
         }

@@ -49,7 +49,7 @@ There are desktop and mobile versions of all the game and UI layouts, as well as
 To add to the asthaetics of the game, I implemented a scrolling background feature to make the game feel more dynamic.
 
 ### Animations
-Another method of making the game less static and more dynamic is the use of animations when matching and cascading runes, which are applied to the runes and different parts of the UI. For example, the score label will animate when updating, as well as the number of required runes, and the number of moves left. Also, the timer will animate when counting down the final 10 seconds.
+Another method of making the game less static and more dynamic is the use of animations when matching and cascading runes, which are applied to the runes and different parts of the UI. For example, the score label will animate when updating, as well as the number of required runes, and the number of moves left. Also, the timer will animate when counting down the final 10 seconds, including playing a SFX to notify the player of their low time remaining.
 
 ### Dynamic BKG music
 The background music is constant throughout the game, but it will lower in volume when in the pause menu. These changes in volume are also smooth, not abrupt.
@@ -63,14 +63,14 @@ All sprites (except background textures) were created by me using Libresprite. A
 
 ---
 
-Font: Romulus<br>
+Font: Assets/Fonts/Romulus.ttf<br>
 Author: Pix3M<br>
 From: OpenGameArt<br>
 https://creativecommons.org/licenses/by/3.0/
 
 ---
 
-Font: Alagard<br>
+Font: Assets/Fonts/Alagard.ttf<br>
 Author: Pix3M<br>
 From: OpenGameArt<br>
 https://creativecommons.org/licenses/by/3.0/
@@ -82,3 +82,9 @@ Author: Michel Baradari apollo-music.de<br>
 From: OpenGameArt<br>
 https://creativecommons.org/licenses/by/3.0/
 
+---
+
+Sound effect: Assets/Audio/Timer.wav<br>
+Author: Hansjörg Malthaner<br>
+From: http://opengameart.org/users/varkalandar<br>
+https://creativecommons.org/licenses/by/3.0/
