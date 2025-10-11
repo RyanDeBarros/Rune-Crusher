@@ -1,4 +1,6 @@
-# Characteristics
+# Components
+
+See *Rune Crusher Components.pdf* for a visual graph of the game's components.
 
 ## Core Features
 

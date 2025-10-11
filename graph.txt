@@ -1,4 +1,62 @@
 @startuml
-title Rune Crusher Components (Undirected Graph)
+title Rune Crusher Components
+
+rectangle "Main Menu Scene" as MainMenu
+rectangle "Level 1 Scene" as Level1
+rectangle "Level 2 Scene" as Level2
+
+rectangle "ICascadeRefiller (Interface)" as ICascadeRefiller
+rectangle "Level1CascadeRefiller" as Refiller1
+rectangle "Level2CascadeRefiller" as Refiller2
+
+rectangle "ITabletAction (Interface)" as ITabletAction
+rectangle "Tablet Action (2x2)" as TabletActionQuad
+rectangle "Tablet Action (L)" as TabletActionL
+rectangle "Tablet Action (Cross)" as TabletActionCross
+rectangle "Tablet Action (5-in-a-row)" as TabletActionFive
+
+rectangle "Rune" as Rune
+rectangle "Rune Color" as RuneColor
+rectangle "Rune Clicker" as RuneClicker
+rectangle "Rune Spawner" as RuneSpawner
+rectangle "Score Tracker" as ScoreTracker
+rectangle "Level HUD Controller" as LevelHUDController
+
+rectangle "BKG Music" as BKGMusic
+rectangle "Platform Support" as PlatformSupport
+rectangle "Level HUDs" as LevelHUDs
+
+MainMenu <--> Level1: Transition
+MainMenu <--> Level2: Transition
+
+Refiller1 --> ICascadeRefiller: Implements
+Refiller2 --> ICascadeRefiller: Implements
+
+Level1 -- Refiller1
+Level2 -- Refiller2
+
+TabletActionQuad --> ITabletAction: Implements
+TabletActionL --> ITabletAction: Implements
+TabletActionCross --> ITabletAction: Implements
+TabletActionFive --> ITabletAction: Implements
+
+Rune -- RuneColor
+RuneSpawner --o Rune
+RuneSpawner -- ScoreTracker
+RuneSpawner -- ICascadeRefiller
+RuneClicker -- RuneSpawner
+RuneClicker -- ScoreTracker
+RuneClicker --> LevelHUDController: Updates
+RuneClicker --o ITabletAction
+ScoreTracker --> LevelHUDController: Updates
+
+MainMenu -- BKGMusic
+PlatformSupport --- RuneClicker
+PlatformSupport --- MainMenu
+PlatformSupport --- Level1
+PlatformSupport --- Level2
+Level1 -- LevelHUDs
+Level2 -- LevelHUDs
+LevelHUDController --> LevelHUDs: Updates
 
 @enduml
